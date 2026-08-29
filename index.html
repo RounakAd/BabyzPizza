@@ -316,12 +316,18 @@
   ═══════════════════════════════════════════ -->
   <div id="top-banner"
        class="bg-animated-gradient text-white py-2 px-4 text-center text-sm md:text-base font-semibold sticky top-0 z-[100] flex items-center justify-center gap-4 overflow-hidden">
-    <span>🔥 FREE PIZZA: Buy any 2 pizzas and get 1 absolutely free! (Free Delivery Upto 3 km) 🔥</span>
-    <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20the%20Buy%202%20Get%201%20Free%20offer!"
+    <div class="flex items-center justify-center gap-3 flex-wrap">
+      <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border border-white/30">🎉 OFFER 1</span>
+      <span>Buy any 2 Pizzas, Get 1 FREE + Free Delivery Upto 3 km 🔥</span>
+      <span class="text-white/60 hidden sm:inline">|</span>
+      <span class="bg-yellow-400 text-yellow-900 px-2.5 py-0.5 rounded-full text-xs font-extrabold animate-pulse">💰 OFFER 2</span>
+      <span>Flat <strong class="text-yellow-300">₹50 OFF</strong> on Any 2 Pizzas!</span>
+    </div>
+    <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20an%20offer!"
        target="_blank"
        rel="noopener"
        class="shrink-0 bg-white text-[#FF5722] font-bold text-xs md:text-sm px-4 py-1.5 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
-      Claim on WhatsApp
+      Claim Offer
     </a>
     <!-- Close button -->
     <button id="banner-close" class="shrink-0 text-white/80 hover:text-white ml-2" aria-label="Dismiss banner">
@@ -686,15 +692,94 @@
   </section>
 
   <!-- ═══════════════════════════════════════════
+       TERMS & CONDITIONS
+  ═══════════════════════════════════════════ -->
+  <section id="terms" class="py-12 px-4 border-t border-white/5">
+    <div class="max-w-3xl mx-auto">
+      <div class="text-center mb-6">
+        <h2 class="font-heading font-black text-2xl md:text-3xl text-white">
+          📋 Terms <span class="text-primary">&</span> Conditions
+        </h2>
+        <div class="pizza-divider w-24 mt-3"></div>
+      </div>
+
+      <div class="glass-card rounded-2xl p-6 md:p-8 space-y-4">
+
+        <!-- Offer 1 T&C -->
+        <div class="flex items-start gap-4 p-4 bg-primary/5 rounded-xl border border-primary/10">
+          <div class="w-10 h-10 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 mt-0.5">
+            <span class="text-lg">🎉</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-white text-sm mb-1">Buy 2 Pizzas, Get 1 FREE</h3>
+            <p class="text-white/50 text-xs leading-relaxed">
+              Buy any 2 pizzas from our menu and get a third pizza absolutely free. Free home delivery included upto 3 km from our kitchen.
+            </p>
+          </div>
+        </div>
+
+        <!-- Offer 2 T&C — highlighted -->
+        <div class="flex items-start gap-4 p-4 bg-yellow-500/5 rounded-xl border border-yellow-500/20 relative overflow-hidden">
+          <div class="absolute top-0 right-0 bg-yellow-400 text-yellow-900 text-[10px] font-extrabold px-3 py-1 rounded-bl-xl uppercase tracking-wider">
+            ⚠️ Important
+          </div>
+          <div class="w-10 h-10 rounded-full bg-yellow-400/10 border border-yellow-400/20 flex items-center justify-center shrink-0 mt-0.5">
+            <span class="text-lg">💰</span>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-yellow-400 text-sm mb-1">Flat ₹50 OFF on Any 2 Pizzas</h3>
+            <p class="text-white/50 text-xs leading-relaxed">
+              Get a flat ₹50 discount when you buy any 2 individual pizzas from our menu.
+              <br><br>
+              <span class="text-yellow-300 font-semibold">⚠️ This offer is NOT applicable on Combos.</span>
+              <br>
+              Applicable only on individual pizza selection (Veg Pizzas & Non-Veg Pizzas tabs).
+            </p>
+          </div>
+        </div>
+
+        <!-- General T&C -->
+        <div class="pt-2 border-t border-white/5">
+          <ul class="space-y-2">
+            <li class="flex items-start gap-2 text-white/40 text-xs">
+              <i data-lucide="check-circle" class="w-4 h-4 text-veg shrink-0 mt-0.5"></i>
+              Prices are inclusive of all taxes unless stated otherwise.
+            </li>
+            <li class="flex items-start gap-2 text-white/40 text-xs">
+              <i data-lucide="check-circle" class="w-4 h-4 text-veg shrink-0 mt-0.5"></i>
+              Delivery timelines are approximate and may vary based on order volume and location.
+            </li>
+            <li class="flex items-start gap-2 text-white/40 text-xs">
+              <i data-lucide="check-circle" class="w-4 h-4 text-veg shrink-0 mt-0.5"></i>
+              Orders once placed cannot be cancelled or modified.
+            </li>
+            <li class="flex items-start gap-2 text-white/40 text-xs">
+              <i data-lucide="check-circle" class="w-4 h-4 text-veg shrink-0 mt-0.5"></i>
+              Babyz Pizza reserves the right to modify or withdraw any offer at any time without prior notice.
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════
        BOTTOM OFFER BANNER
   ═══════════════════════════════════════════ -->
   <div id="bottom-banner" class="bg-animated-gradient text-white py-4 px-4 text-center text-sm md:text-base font-semibold flex flex-col sm:flex-row items-center justify-center gap-3">
-    <span>🔥 FREE PIZZA: Buy any 2 pizzas and get 1 absolutely free! (Free Delivery Upto 3 km) 🔥</span>
-    <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20the%20Buy%202%20Get%201%20Free%20offer!"
+    <div class="flex items-center justify-center gap-3 flex-wrap">
+      <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border border-white/30">🎉 OFFER 1</span>
+      <span>Buy any 2 Pizzas, Get 1 FREE + Free Delivery Upto 3 km 🔥</span>
+      <span class="text-white/60 hidden sm:inline">|</span>
+      <span class="bg-yellow-400 text-yellow-900 px-2.5 py-0.5 rounded-full text-xs font-extrabold animate-pulse">💰 OFFER 2</span>
+      <span>Flat <strong class="text-yellow-300">₹50 OFF</strong> on Any 2 Pizzas!</span>
+    </div>
+    <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20an%20offer!"
        target="_blank"
        rel="noopener"
        class="shrink-0 bg-white text-[#FF5722] font-bold text-xs md:text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
-      Claim on WhatsApp
+      Claim Offer
     </a>
   </div>
 
@@ -830,7 +915,7 @@
           ingredients: ['Mozzarella'],
           badge: null,
           isCombo: false,
-          image: null,   // no image yet — falls back to SVG placeholder
+          image: './images/OG Margherita Pizza.jpeg',
         },
         {
           id: 'v2', slug: 'corn-cheese-delight',
@@ -839,7 +924,7 @@
           ingredients: ['Sweet Corn', 'Mozzarella'],
           badge: null,
           isCombo: false,
-          image: null,
+          image: './images/Corn Cheese Delight Pizza.jpeg',
         },
         {
           id: 'v3', slug: 'fiery-veg',
@@ -848,7 +933,7 @@
           ingredients: ['Red Paprika', 'Jalapenos', 'Onion', 'Capsicum', 'Mozzarella'],
           badge: '🌶️ Spicy',
           isCombo: false,
-          image: null,
+          image: './images/Fiery Veg Pizza.jpeg',
         },
         {
           id: 'v4', slug: 'countryside-veggies',
@@ -857,7 +942,7 @@
           ingredients: ['Fresh Olives', 'Mushroom', 'Onion', 'Capsicum', 'Mozzarella'],
           badge: null,
           isCombo: false,
-          image: null,
+          image: './images/Countryside Veggies Pizza.jpeg',
         },
       ],
       nonveg: [
@@ -868,21 +953,21 @@
           ingredients: ['Chicken Sausage', 'Capsicum', 'Onion', 'Mozzarella'],
           badge: null,
           isCombo: false,
-          image: null,
+          image: './images/Chicken Sausage Pizza.jpeg',
         },
         {
           id: 'n2', slug: 'chicken-pepperoni',
           name: 'Chicken Pepperoni Pizza',
           price: 180,
           ingredients: ['Chicken Pepperoni', 'Red Paprika', 'Mozzarella'],
-          badge: null,
+          badge: '🌶️ Spicy',
           isCombo: false,
-          image: './images/pizza-pepperoni.jpeg',
+          image: './images/Chicken Pepperoni Pizza.jpeg',
         },
         {
           id: 'n3', slug: 'mexican-sausage-supreme',
           name: 'Mexican Sausage Supreme',
-          price: 180,
+          price: 190,
           ingredients: ['Chicken Sausage', 'Black Olives', 'Jalapenos', 'Onion', 'Mozzarella'],
           badge: null,
           isCombo: false,
@@ -898,7 +983,7 @@
           ingredients: ['Margherita × 2', 'Free Cold Drink'],
           badge: '⭐ Bestseller',
           isCombo: true,
-          image: './images/pizza-combo.jpeg',
+          image: './images/Mergherita + Margherita Combo.jpeg',
         },
         {
           id: 'c2', slug: 'margherita-corn-cheese-combo',
@@ -908,47 +993,47 @@
           ingredients: ['Margherita', 'Corn Cheese Delight', 'Free Cold Drink'],
           badge: null,
           isCombo: true,
-          image: './images/pizza-combo.jpeg',
+          image: './images/Corn Cheese Delight and Margherita Combo.jpeg',
         },
         {
           id: 'c3', slug: 'fiery-countryside-combo',
           name: 'Fiery Veg + Countryside Veggies Combo',
           subtitle: '+ Free Cold Drink (200ml)',
-          price: 265,
+          price: 285,
           ingredients: ['Fiery Veg Pizza', 'Countryside Veggies', 'Free Cold Drink'],
           badge: null,
           isCombo: true,
-          image: './images/pizza-combo.jpeg',
+          image: './images/Fiery Veg + Countryside Veggies Combo.jpeg',
         },
         {
           id: 'c4', slug: 'fiery-chicken-sausage-combo',
           name: 'Fiery Veg + Chicken Sausage Combo',
           subtitle: '+ Free Cold Drink (200ml)',
-          price: 265,
+          price: 295,
           ingredients: ['Fiery Veg Pizza', 'Chicken Sausage', 'Free Cold Drink'],
           badge: null,
           isCombo: true,
-          image: './images/pizza-combo.jpeg',
+          image: './images/Fiery Veg and Chicken Sausage Combo.jpeg',
         },
         {
           id: 'c5', slug: 'sausage-supreme-combo',
           name: 'Chicken Sausage + Mexican Sausage Supreme Combo',
           subtitle: '+ Free Cold Drink (200ml)',
-          price: 275,
+          price: 325,
           ingredients: ['Chicken Sausage', 'Mexican Sausage Supreme', 'Free Cold Drink'],
           badge: null,
           isCombo: true,
-          image: './images/pizza-combo.jpeg',
+          image: './images/Mexican Sausage Supreme + Chicken Sausage Combo.jpeg',
         },
         {
           id: 'c6', slug: 'sausage-pepperoni-combo',
           name: 'Chicken Sausage + Chicken Pepperoni Combo',
           subtitle: '+ Free Cold Drink (200ml)',
-          price: 275,
+          price: 325,
           ingredients: ['Chicken Sausage', 'Chicken Pepperoni', 'Free Cold Drink'],
           badge: '🔥 Popular',
           isCombo: true,
-          image: './images/pizza-combo.jpeg',
+          image: './images/Pepperoni and Chicken Sausage Combo.jpeg',
         },
       ],
     };
@@ -1347,6 +1432,9 @@
     // ════════════════════════════════════════
     renderMenu('veg');
     handleScroll();
+
+    // Re-init icons for T&C section (static HTML uses lucide icons)
+    lucide.createIcons();
 
     // Re-run scroll reveal on load
     setTimeout(observeRevealElements, 100);
