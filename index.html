@@ -315,7 +315,7 @@
        TOP OFFER BANNER
   ═══════════════════════════════════════════ -->
   <div id="top-banner"
-       class="bg-[#1a0a00] text-white py-4 px-4 sticky top-0 z-[100] overflow-hidden"
+       class="hidden md:block bg-[#1a0a00] text-white py-4 px-4 sticky top-0 z-[100] overflow-hidden"
        style="background: linear-gradient(135deg, #1a0a00 0%, #2d0f00 30%, #1a0a00 60%, #2d0f00 100%); border-bottom: 2px solid #FF5722;">
     <div class="max-w-4xl mx-auto space-y-2">
 
@@ -365,7 +365,7 @@
        NAVBAR
   ═══════════════════════════════════════════ -->
   <nav id="navbar"
-       class="sticky top-[44px] md:top-[48px] z-[90] border-b border-white/5
+       class="sticky top-0 md:top-[96px] z-[90] border-b border-white/5
               bg-transparent py-3 px-4 md:px-8">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
 
@@ -460,7 +460,7 @@
 
     <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
       <!-- Animated floating logo -->
-      <div class="relative inline-block mb-8 animate-float">
+      <div class="relative inline-block mb-8 md:pt-4 animate-float">
         <div class="relative w-36 h-36 md:w-48 md:h-48 mx-auto pulse-ring">
           <img src="./images/logo.jpeg"
                alt="Babyz Pizza"
@@ -505,6 +505,14 @@
            target="_blank" rel="noopener"
            class="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white font-bold text-base md:text-lg px-8 py-4 rounded-full border border-white/20 transition-all hover:scale-105 backdrop-blur">
           <i data-lucide="message-circle" class="w-5 h-5"></i> Order Now
+        </a>
+      </div>
+
+      <!-- Mobile-only: View Offers -->
+      <div class="mt-4 md:hidden">
+        <a href="#bottom-banner"
+           class="inline-flex items-center gap-2 bg-[#FFC107] hover:bg-[#FFC107]/90 text-[#1a0a00] font-extrabold text-sm px-6 py-3 rounded-full shadow-lg shadow-[#FFC107]/40 transition-all hover:scale-105 border-2 border-[#FFC107]">
+          <span>🎁</span> View Offers
         </a>
       </div>
     </div>
@@ -1445,12 +1453,14 @@
       const scrolled = window.scrollY > 20;
       navbar.classList.toggle('scrolled', scrolled);
 
-      // Adjust navbar top based on banner state
-      const bannerHeight = bannerDismissed ? 0 : (topBanner?.offsetHeight || 96);
+      // Adjust navbar top based on banner state (desktop only — mobile has no top banner)
+      const isMobile = window.innerWidth < 768;
+      const bannerHeight = isMobile ? 0 : (bannerDismissed ? 0 : (topBanner?.offsetHeight || 96));
       navbar.style.top = `${bannerHeight}px`;
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleScroll, { passive: true });
 
     // Banner close
     const bannerClose = document.getElementById('banner-close');
