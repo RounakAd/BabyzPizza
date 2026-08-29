@@ -287,7 +287,7 @@
     #top-banner {
       transition: max-height 0.5s ease, opacity 0.5s ease;
       overflow: hidden;
-      max-height: 80px;
+      max-height: 140px;
     }
     #top-banner.collapsed {
       max-height: 0;
@@ -315,22 +315,48 @@
        TOP OFFER BANNER
   ═══════════════════════════════════════════ -->
   <div id="top-banner"
-       class="bg-animated-gradient text-white py-2 px-4 text-center text-sm md:text-base font-semibold sticky top-0 z-[100] flex items-center justify-center gap-4 overflow-hidden">
-    <div class="flex items-center justify-center gap-3 flex-wrap">
-      <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border border-white/30">🎉 OFFER 1</span>
-      <span>Buy any 2 Pizzas, Get 1 FREE + Free Delivery Upto 3 km 🔥</span>
-      <span class="text-white/60 hidden sm:inline">|</span>
-      <span class="bg-yellow-400 text-yellow-900 px-2.5 py-0.5 rounded-full text-xs font-extrabold animate-pulse">💰 OFFER 2</span>
-      <span>Flat <strong class="text-yellow-300">₹50 OFF</strong> on Any 2 Pizzas!</span>
+       class="bg-[#1a0a00] text-white py-4 px-4 sticky top-0 z-[100] overflow-hidden"
+       style="background: linear-gradient(135deg, #1a0a00 0%, #2d0f00 30%, #1a0a00 60%, #2d0f00 100%); border-bottom: 2px solid #FF5722;">
+    <div class="max-w-4xl mx-auto space-y-2">
+
+      <!-- Offer 1 Row -->
+      <div class="flex items-center justify-between gap-3">
+        <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20the%20Buy%202%20Get%201%20Free%20offer!"
+           target="_blank"
+           rel="noopener"
+           class="bg-gradient-to-r from-[#FF5722] to-[#E64A19] text-white font-extrabold text-[11px] px-4 py-2 rounded-full shadow-lg shadow-[#FF5722]/50 hover:shadow-[#FF5722]/70 hover:scale-105 transition-all shrink-0 whitespace-nowrap">
+          🎉 Claim Offer 1
+        </a>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="bg-white/10 border border-white/20 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">OFFER 1</span>
+          <span class="text-xs font-semibold leading-tight">
+            Buy any <span class="text-[#FFC107] font-extrabold">2 Pizzas</span>, Get <span class="text-[#FF5722] font-extrabold">1 ABSOLUTELY FREE</span> + Free Delivery Upto 3 km 🔥
+          </span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t border-white/10"></div>
+
+      <!-- Offer 2 Row -->
+      <div class="flex items-center justify-between gap-3">
+        <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20the%20Rs.50%20off%20offer!"
+           target="_blank"
+           rel="noopener"
+           class="bg-gradient-to-r from-[#FFC107] to-[#FF8F00] text-[#1a0a00] font-extrabold text-[11px] px-4 py-2 rounded-full shadow-lg shadow-[#FFC107]/50 hover:shadow-[#FFC107]/70 hover:scale-105 transition-all shrink-0 whitespace-nowrap">
+          💰 Claim Offer 2
+        </a>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">OFFER 2</span>
+          <span class="text-xs font-semibold leading-tight">
+            Flat <span class="text-[#FFC107] font-black text-base">₹50 OFF</span> on Buying Any <span class="text-white font-extrabold">2 Pizzas</span> — T&C Apply*
+          </span>
+        </div>
+      </div>
+
     </div>
-    <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20an%20offer!"
-       target="_blank"
-       rel="noopener"
-       class="shrink-0 bg-white text-[#FF5722] font-bold text-xs md:text-sm px-4 py-1.5 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
-      Claim Offer
-    </a>
-    <!-- Close button -->
-    <button id="banner-close" class="shrink-0 text-white/80 hover:text-white ml-2" aria-label="Dismiss banner">
+    <!-- Dismiss -->
+    <button id="banner-close" class="absolute top-2 right-3 text-white/50 hover:text-white p-1 transition-colors" aria-label="Dismiss banner">
       <i data-lucide="x" class="w-4 h-4"></i>
     </button>
   </div>
@@ -339,7 +365,7 @@
        NAVBAR
   ═══════════════════════════════════════════ -->
   <nav id="navbar"
-       class="sticky top-[40px] md:top-[44px] z-[90] border-b border-white/5
+       class="sticky top-[44px] md:top-[48px] z-[90] border-b border-white/5
               bg-transparent py-3 px-4 md:px-8">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
 
@@ -767,20 +793,48 @@
   <!-- ═══════════════════════════════════════════
        BOTTOM OFFER BANNER
   ═══════════════════════════════════════════ -->
-  <div id="bottom-banner" class="bg-animated-gradient text-white py-4 px-4 text-center text-sm md:text-base font-semibold flex flex-col sm:flex-row items-center justify-center gap-3">
-    <div class="flex items-center justify-center gap-3 flex-wrap">
-      <span class="bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold border border-white/30">🎉 OFFER 1</span>
-      <span>Buy any 2 Pizzas, Get 1 FREE + Free Delivery Upto 3 km 🔥</span>
-      <span class="text-white/60 hidden sm:inline">|</span>
-      <span class="bg-yellow-400 text-yellow-900 px-2.5 py-0.5 rounded-full text-xs font-extrabold animate-pulse">💰 OFFER 2</span>
-      <span>Flat <strong class="text-yellow-300">₹50 OFF</strong> on Any 2 Pizzas!</span>
+  <div id="bottom-banner"
+       class="text-white py-3 px-4"
+       style="background: linear-gradient(135deg, #1a0a00 0%, #2d0f00 30%, #1a0a00 60%, #2d0f00 100%); border-top: 2px solid #FF5722;">
+    <div class="max-w-4xl mx-auto space-y-2">
+
+      <!-- Offer 1 Row -->
+      <div class="flex items-center justify-between gap-3">
+        <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20the%20Buy%202%20Get%201%20Free%20offer!"
+           target="_blank"
+           rel="noopener"
+           class="bg-gradient-to-r from-[#FF5722] to-[#E64A19] text-white font-extrabold text-[11px] px-4 py-2 rounded-full shadow-lg shadow-[#FF5722]/50 hover:shadow-[#FF5722]/70 hover:scale-105 transition-all shrink-0 whitespace-nowrap">
+          🎉 Claim Offer 1
+        </a>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="bg-white/10 border border-white/20 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">OFFER 1</span>
+          <span class="text-xs font-semibold leading-tight">
+            Buy any <span class="text-[#FFC107] font-extrabold">2 Pizzas</span>, Get <span class="text-[#FF5722] font-extrabold">1 ABSOLUTELY FREE</span> + Free Delivery Upto 3 km 🔥
+          </span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="border-t border-white/10"></div>
+
+      <!-- Offer 2 Row -->
+      <div class="flex items-center justify-between gap-3">
+        <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20the%20Rs.50%20off%20offer!"
+           target="_blank"
+           rel="noopener"
+           class="bg-gradient-to-r from-[#FFC107] to-[#FF8F00] text-[#1a0a00] font-extrabold text-[11px] px-4 py-2 rounded-full shadow-lg shadow-[#FFC107]/50 hover:shadow-[#FFC107]/70 hover:scale-105 transition-all shrink-0 whitespace-nowrap">
+          💰 Claim Offer 2
+        </a>
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="bg-yellow-400/20 border border-yellow-400/40 text-yellow-300 text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">OFFER 2</span>
+          <span class="text-xs font-semibold leading-tight">
+            Flat <span class="text-[#FFC107] font-black text-base">₹50 OFF</span> on Buying Any <span class="text-white font-extrabold">2 Pizzas</span> — T&C Apply*
+          </span>
+        </div>
+      </div>
+
     </div>
-    <a href="https://wa.me/918017414711?text=Hi%20Babyz%20Pizza!%20I%27d%20like%20to%20claim%20an%20offer!"
-       target="_blank"
-       rel="noopener"
-       class="shrink-0 bg-white text-[#FF5722] font-bold text-xs md:text-sm px-5 py-2 rounded-full hover:bg-gray-100 transition-colors shadow-lg">
-      Claim Offer
-    </a>
+  </div>
   </div>
 
   <!-- ═══════════════════════════════════════════
@@ -1392,7 +1446,7 @@
       navbar.classList.toggle('scrolled', scrolled);
 
       // Adjust navbar top based on banner state
-      const bannerHeight = bannerDismissed ? 0 : (topBanner?.offsetHeight || 44);
+      const bannerHeight = bannerDismissed ? 0 : (topBanner?.offsetHeight || 96);
       navbar.style.top = `${bannerHeight}px`;
     }
 
