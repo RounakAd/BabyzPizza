@@ -342,6 +342,40 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
   color:var(--faint);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
 .hero__scroll .ico{font-size:1.1rem;animation:bob 2.2s ease-in-out infinite}
 
+/* ── hanging shop sign — live open / closed status ── */
+.sign{position:relative;display:flex;flex-direction:column;align-items:center;
+  width:clamp(200px,58vw,254px);max-width:100%;margin:0 auto clamp(1.1rem,3vw,1.7rem);padding-top:12px;
+  --sign-accent:#4ade80;--sign-glow:rgba(34,197,94,.55);--sign-meta:#86efac}
+.sign--closed{--sign-accent:#ffb020;--sign-glow:rgba(255,176,32,.5);--sign-meta:#ffd88a}
+.sign__hook{position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.34);
+  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.34),rgba(255,255,255,.05))}
+.sign__hook::after{content:"";position:absolute;left:50%;bottom:calc(100% + 4px);
+  transform:translateX(-50%);width:46px;height:3px;border-radius:2px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent)}
+.sign__swing{width:100%;transform-origin:50% 0;
+  animation:signSwing 5.6s cubic-bezier(.45,.05,.55,.95) infinite;will-change:transform}
+@keyframes signSwing{0%,100%{transform:rotate(-2.7deg)}50%{transform:rotate(2.7deg)}}
+.sign__cords{display:block;width:100%;height:42px}
+.sign__cords line{stroke:rgba(255,255,255,.32);stroke-width:1.6;stroke-linecap:round;
+  vector-effect:non-scaling-stroke}
+.sign__board{position:relative;display:flex;flex-direction:column;align-items:center;gap:.14rem;
+  width:100%;padding:.72rem 1rem .8rem;border-radius:14px;
+  background:linear-gradient(158deg,rgba(30,36,50,.95),rgba(11,15,23,.96));
+  border:1px solid var(--stroke-2);
+  box-shadow:0 20px 44px -20px rgba(0,0,0,.95),inset 0 1px 0 rgba(255,255,255,.15),
+             0 0 36px -14px var(--sign-glow)}
+.sign__board::before{content:"";position:absolute;inset:4px;border-radius:10px;
+  border:1px dashed rgba(255,255,255,.09);pointer-events:none}
+.sign__row{display:flex;align-items:center;gap:.42rem}
+.sign__dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--sign-accent);
+  box-shadow:0 0 9px 1px var(--sign-accent);animation:signPulse 2s ease-in-out infinite}
+@keyframes signPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.sign__status{font-family:var(--font-head);font-weight:800;letter-spacing:-.01em;
+  font-size:clamp(.8rem,2.7vw,.94rem);color:#fff}
+.sign__meta{font-size:clamp(.63rem,2.1vw,.72rem);font-weight:600;color:var(--sign-meta);
+  text-align:center;line-height:1.42;white-space:pre-line}
+
 /* ══════════════════════════════════════════════════════════════
    MENU
    ══════════════════════════════════════════════════════════════ */
@@ -489,6 +523,28 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
 .info h3{font-size:1rem;font-weight:700}
 .info p{font-size:.82rem;color:var(--muted);margin-top:.15rem}
 .info__links{display:flex;flex-wrap:wrap;gap:.45rem;margin-top:.6rem}
+
+/* ── opening hours block ── */
+.hours{margin-top:.72rem;padding:.62rem .72rem;border-radius:var(--r-sm);
+  background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22)}
+.hours.is-closed{background:rgba(255,176,32,.07);border-color:rgba(255,176,32,.24)}
+.hours__head{display:flex;align-items:center;gap:.42rem;flex-wrap:wrap}
+.hours__dot{width:7px;height:7px;flex:none;border-radius:50%;background:#4ade80;
+  box-shadow:0 0 8px 1px rgba(74,222,128,.85);animation:signPulse 2s ease-in-out infinite}
+.hours.is-closed .hours__dot{background:#ffb020;box-shadow:0 0 8px 1px rgba(255,176,32,.85)}
+.hours__label{font-family:var(--font-head);font-weight:800;font-size:.8rem;
+  color:#86efac;white-space:nowrap}
+.hours__clock{font-size:.95rem;color:#4ade80}
+.hours.is-closed .hours__clock{color:#ffb020}
+.hours.is-closed .hours__label{color:#ffd88a}
+.hours__time{font-family:var(--font-head);font-weight:800;font-size:.79rem;color:#fff;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
+  padding:.14rem .52rem;border-radius:99px;white-space:nowrap}
+.hours__list{display:grid;gap:.3rem;margin-top:.52rem}
+.hours__list li{display:flex;align-items:flex-start;gap:.42rem;font-size:.76rem;
+  color:var(--muted);line-height:1.45}
+.hours__list .ico{font-size:.9rem;flex:none;margin-top:.16rem;color:#4ade80}
+.hours__list b{color:var(--text);font-weight:700}
 .tel{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.86);
   padding:.38rem .7rem;border-radius:10px;background:rgba(255,255,255,.05);
   border:1px solid var(--stroke);transition:all .25s var(--ease)}
@@ -691,6 +747,9 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;
     transition-duration:.001ms!important;scroll-behavior:auto!important}
   .reveal{opacity:1;transform:none}
+  /* the swing would otherwise freeze at its first keyframe, leaving the sign
+     permanently tilted */
+  .sign__swing{animation:none;transform:none}
 }
 </style>
 </head>
@@ -833,6 +892,25 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
 <!-- ══════════════ HERO ══════════════ -->
 <section class="hero" id="hero">
   <div class="wrap">
+
+    <!-- ══ LIVE OPEN / CLOSED SHOP SIGN — driven by CONFIG.hours ══ -->
+    <div class="sign" id="shopSign" role="status" aria-live="polite">
+      <span class="sign__hook" aria-hidden="true"></span>
+      <div class="sign__swing">
+        <svg class="sign__cords" viewBox="0 0 200 42" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+          <line x1="100" y1="1" x2="70" y2="42"/>
+          <line x1="100" y1="1" x2="130" y2="42"/>
+        </svg>
+        <div class="sign__board">
+          <span class="sign__row">
+            <span class="sign__dot" aria-hidden="true"></span>
+            <span class="sign__status" id="signStatus">Babyz Pizza is now open</span>
+          </span>
+          <span class="sign__meta" id="signMeta">Delivery till 11:30 pm · Takeaway till 1:30 am</span>
+        </div>
+      </div>
+    </div>
+
     <div class="hero__logo">
       <img src="./images/logo.jpeg" alt="Babyz Pizza" width="178" height="178"
            onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'🍕',style:'font-size:5rem;display:grid;place-items:center;width:100%;height:100%;border-radius:50%;background:linear-gradient(135deg,#FF6A2A,#E8431A)'}))" />
@@ -934,10 +1012,10 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
           <span class="offer-card__emoji">🎉</span>
         </div>
         <h3 class="offer-card__title">Buy <span>3</span> Pizzas,<br/>Get <span>1</span> FREE</h3>
-        <p class="offer-card__desc">Add any <strong>3 individual pizzas</strong> to your cart and the <strong>cheapest one is on us</strong> — plus free home delivery upto 3 km from our kitchen.</p>
+        <p class="offer-card__desc">Add <strong>3 individual pizzas</strong> and the <strong>4th one is on us</strong> — the cheapest pizza in every set of 4 is free, plus free home delivery upto 3 km from our kitchen.</p>
         <ul class="offer-card__list">
           <li><svg class="ico"><use href="#i-check"/></svg> Calculated automatically in your cart</li>
-          <li><svg class="ico"><use href="#i-check"/></svg> Stacks up — 6 pizzas means 2 free</li>
+          <li><svg class="ico"><use href="#i-check"/></svg> Every 4 pizzas unlocks 1 free — 8 pizzas means 2 free</li>
           <li><svg class="ico"><use href="#i-info"/></svg> Not applicable on combos</li>
         </ul>
         <a class="btn btn--primary offer-card__cta" href="https://wa.me/918017414711"
@@ -1048,9 +1126,19 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
           <div>
             <h3>Cloud Kitchen</h3>
             <p>Babyz Pizza — crafting happiness, one slice at a time.</p>
-            <span class="pill pill--veg" style="margin-top:.5rem">
-              <svg class="ico"><use href="#i-clock"/></svg> Open daily
-            </span>
+            <!-- EDIT OPENING HOURS IN CONFIG.hours -->
+            <div class="hours">
+              <div class="hours__head">
+                <span class="hours__dot" data-live-dot aria-hidden="true"></span>
+                <svg class="ico hours__clock" aria-hidden="true"><use href="#i-clock"/></svg>
+                <span class="hours__label">Open daily</span>
+                <span class="hours__time">7:00 pm – 1:30 am</span>
+              </div>
+              <ul class="hours__list">
+                <li><svg class="ico"><use href="#i-truck"/></svg><span><b>Delivery</b> — only if ordered before <b>11:30 pm</b></span></li>
+                <li><svg class="ico"><use href="#i-bag"/></svg><span><b>Takeaway</b> — available till <b>1:30 am</b></span></li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -1089,7 +1177,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
         <span class="term__ico">🎉</span>
         <div>
           <h3>Buy 3 Pizzas, Get 1 FREE</h3>
-          <p>Buy any <strong>3 individual pizzas</strong> from our menu and get the cheapest one <strong>absolutely free</strong> — 6 pizzas means 2 free. Free home delivery included upto 3 km from our kitchen.</p>
+          <p>Buy any <strong>3 individual pizzas</strong> from our menu and the <strong>4th one is free</strong> — the cheapest pizza in each set of 4 is on us. So 4 pizzas means 1 free and 8 pizzas means 2 free. Free home delivery included upto 3 km from our kitchen.</p>
         </div>
       </div>
 
@@ -1245,10 +1333,26 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
 
     freeDeliveryKm: 3,
 
+    // ── OPENING HOURS (Indian Standard Time) ──
+    // Drives the "Open daily" block and the swinging shop sign in the hero.
+    hours: {
+      tz: 'Asia/Kolkata',
+      openHour: 19,   openMin: 0,     // 7:00 pm  — kitchen opens
+      closeHour: 1,   closeMin: 30,   // 1:30 am  — kitchen closes (crosses midnight)
+      cutoffHour: 23, cutoffMin: 30,  // 11:30 pm — last delivery order
+      openLabel: '7:00 pm',
+      closeLabel: '1:30 am',
+      cutoffLabel: '11:30 pm',
+    },
+
     offers: {
       // ── OFFER 1: Buy 3 Get 1 Free ──
-      // buyQty = how many individual pizzas unlock the deal
-      // freeQty = how many of the cheapest pizzas become free
+      // A full cycle is buyQty + freeQty pizzas. You pay for buyQty and the
+      // cheapest freeQty pizzas inside that cycle come off the bill.
+      //   3 pizzas → pay for 3 (no freebie yet)
+      //   4 pizzas → pay for 3, 1 free
+      //   6 pizzas → pay for 5, 1 free
+      //   8 pizzas → pay for 6, 2 free
       b3g1: {
         enabled: true,
         buyQty: 3,
@@ -1362,8 +1466,11 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
      PRICING ENGINE
      ──────────────────────────────────────────────────────────────
      Offer 1 — Buy 3 Get 1 Free
-       Every 3 individual pizzas in the cart make the CHEAPEST pizza
-       free. 3 pizzas → 1 free, 6 pizzas → 2 free.
+       A cycle is 4 individual pizzas: you pay for 3 and the cheapest
+       1 of that cycle is free. A PARTIAL cycle earns nothing, so
+         3 pizzas → pay for all 3      4 pizzas → 1 free
+         6 pizzas → 1 free             7 pizzas → 1 free
+         8 pizzas → 2 free
      Offer 2 — Flat ₹50 off on any 2 individual pizzas.
      Combos never count towards either offer (they are already
      discounted). Only the better of the two offers is applied.
@@ -1393,8 +1500,11 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     // ── Offer 1: Buy 3 Get 1 Free ──
     let b3g1 = { key:'b3g1', amount:0, freeItems:0, applied:false };
     const o1 = CONFIG.offers.b3g1;
-    if (o1.enabled && pizzaQty >= o1.buyQty) {
-      const freeItems = Math.floor(pizzaQty / o1.buyQty) * o1.freeQty;
+    const cycle = o1.buyQty + o1.freeQty;   // 4 pizzas = 3 paid + 1 free
+    if (o1.enabled && pizzaQty >= cycle) {
+      // Only a COMPLETE cycle earns a freebie — 3 of 4 pizzas earns nothing,
+      // 4 earns 1, 7 earns 1, 8 earns 2.
+      const freeItems = Math.floor(pizzaQty / cycle) * o1.freeQty;
       const cheapest = unitPrices.slice().sort((a, b) => a - b);
       const amount = cheapest.slice(0, freeItems).reduce((s, p) => s + p, 0);
       b3g1 = { key:'b3g1', amount: amount, freeItems: freeItems, applied: amount > 0 };
@@ -1420,13 +1530,14 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     // cart is told to "add 3 more to unlock a free pizza" when it already has one.
     let nudge = null;
     if (pizzaQty === 0) {
-      nudge = { add: o1.buyQty, text: 'Add ' + o1.buyQty + ' pizzas to get 1 free' };
+      nudge = { add: cycle, text: 'Add ' + cycle + ' pizzas to get 1 free' };
     } else if (best && best.key === 'b3g1') {
-      const toNext = (pizzaQty % o1.buyQty === 0) ? o1.buyQty : o1.buyQty - (pizzaQty % o1.buyQty);
+      const rem = pizzaQty % cycle;
+      const toNext = rem === 0 ? cycle : cycle - rem;
       nudge = { add: toNext,
                 text: 'Add ' + toNext + ' more pizza' + (toNext > 1 ? 's' : '') + ' for another FREE pizza' };
     } else if (best && best.key === 'flat') {
-      const toFree = o1.buyQty - pizzaQty;
+      const toFree = cycle - pizzaQty;
       if (toFree > 0) {
         nudge = { add: toFree,
                   text: 'Add ' + toFree + ' more pizza' + (toFree > 1 ? 's' : '') + ' and get 1 FREE instead' };
@@ -1517,8 +1628,9 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
 
     // gentle upsell based on what is already in the cart
     const have = p.pizzaQty + 1;
-    if (!item.isCombo && have < CONFIG.offers.b3g1.buyQty) {
-      const need = CONFIG.offers.b3g1.buyQty - have;
+    const cycleTip = CONFIG.offers.b3g1.buyQty + CONFIG.offers.b3g1.freeQty;
+    if (!item.isCombo && have < cycleTip) {
+      const need = cycleTip - have;
       out.push('');
       out.push('_Tip: add ' + need + ' more pizza' + (need > 1 ? 's' : '') +
                ' and get 1 FREE — or 2 pizzas total for Flat ₹50 OFF._');
@@ -1912,6 +2024,75 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   }
 
   /* ══════════════════════════════════════════════════════════════
+     OPENING HOURS — live status read from the real Indian clock
+     ──────────────────────────────────────────────────────────────
+     The visitor's own timezone is irrelevant: we always resolve IST,
+     so someone browsing from anywhere sees the correct state.
+     ══════════════════════════════════════════════════════════════ */
+  function istMinutesNow() {
+    const H = CONFIG.hours;
+    try {
+      const parts = new Intl.DateTimeFormat('en-GB', {
+        timeZone: H.tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+      }).formatToParts(new Date());
+      let h = 0, m = 0;
+      parts.forEach(function (p) {
+        if (p.type === 'hour') h = parseInt(p.value, 10) % 24;  // some engines emit "24"
+        if (p.type === 'minute') m = parseInt(p.value, 10);
+      });
+      return h * 60 + m;
+    } catch (e) {
+      // Fallback for engines without timeZone support: IST is a fixed UTC+05:30.
+      const d = new Date();
+      return (d.getUTCHours() * 60 + d.getUTCMinutes() + 330) % 1440;
+    }
+  }
+
+  function openState(nowMinutes) {
+    const H = CONFIG.hours;
+    const now = (nowMinutes == null) ? istMinutesNow() : nowMinutes;
+    const opensAt  = H.openHour * 60 + H.openMin;
+    const closesAt = H.closeHour * 60 + H.closeMin;
+    const cutoff   = H.cutoffHour * 60 + H.cutoffMin;
+    // The window runs 7:00 pm → 1:30 am, so it wraps past midnight.
+    const isOpen = now >= opensAt || now < closesAt;
+    // Delivery stops at 11:30 pm; the tail of the night is takeaway only.
+    const deliveryOpen = now >= opensAt && now < cutoff;
+    return { isOpen: isOpen, deliveryOpen: deliveryOpen };
+  }
+
+  function renderShopSign() {
+    const sign = $('#shopSign');
+    if (!sign) return;
+    const H = CONFIG.hours;
+    const st = openState();
+
+    sign.classList.toggle('sign--closed', !st.isOpen);
+
+    let status, meta;
+    if (!st.isOpen) {
+      status = 'Babyz Pizza is now closed';
+      meta = 'Will open at ' + H.openLabel + ' today';
+    } else if (st.deliveryOpen) {
+      status = 'Babyz Pizza is now open';
+      // \n renders as a real line break (.sign__meta is white-space:pre-line)
+      meta = 'Delivery till ' + H.cutoffLabel + '\nTakeaway till ' + H.closeLabel;
+    } else {
+      status = 'Babyz Pizza is now open';
+      meta = 'Takeaway only now\nDelivery closed at ' + H.cutoffLabel;
+    }
+
+    const statusEl = $('#signStatus');
+    const metaEl = $('#signMeta');
+    if (statusEl.textContent !== status) statusEl.textContent = status;
+    if (metaEl.textContent !== meta) metaEl.textContent = meta;
+
+    // mirror the state onto the hours block in the contact section
+    const hours = $('.hours');
+    if (hours) hours.classList.toggle('is-closed', !st.isOpen);
+  }
+
+  /* ══════════════════════════════════════════════════════════════
      INIT
      ══════════════════════════════════════════════════════════════ */
   $('#year').textContent = new Date().getFullYear();
@@ -1925,8 +2106,12 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
 
   renderMenu('veg');
   refresh();
+  renderShopSign();
   onScroll();
   observeReveal();
+
+  // keep the sign honest if the page is left open across the 7:00 pm / 1:30 am boundary
+  setInterval(renderShopSign, 60000);
 
   // safety net: if fonts/images shift things around, re-check the reveal state
   window.addEventListener('load', function () { onScroll(); observeReveal(); });
