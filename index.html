@@ -53,6 +53,12 @@
 
   --pad-x:clamp(.9rem,3vw,1.75rem);
   --sec-y:clamp(3.25rem,8vw,6.5rem);
+
+  /* live open/closed palette — shared by the hero sign and the hours block,
+     so the two can never drift out of sync. "closed" overrides them below. */
+  --sign-accent:#4ade80;
+  --sign-glow:rgba(34,197,94,.55);
+  --sign-meta:#86efac;
 }
 
 /* ── reset ── */
@@ -344,9 +350,9 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
 
 /* ── hanging shop sign — live open / closed status ── */
 .sign{position:relative;display:flex;flex-direction:column;align-items:center;
-  width:clamp(214px,60vw,258px);max-width:100%;margin:0 auto clamp(1.1rem,3vw,1.7rem);padding-top:12px;
-  --sign-accent:#4ade80;--sign-glow:rgba(34,197,94,.55);--sign-meta:#86efac}
-.sign--closed{--sign-accent:#ffb020;--sign-glow:rgba(255,176,32,.5);--sign-meta:#ffd88a}
+  width:clamp(214px,60vw,258px);max-width:100%;margin:0 auto clamp(1.1rem,3vw,1.7rem);padding-top:12px}
+/* one "closed" palette for both the hero sign and the hours block */
+.sign--closed,.hours.is-closed{--sign-accent:#ffb020;--sign-glow:rgba(255,176,32,.5);--sign-meta:#ffd88a}
 .sign__hook{position:absolute;top:0;left:50%;transform:translateX(-50%);
   width:13px;height:13px;border-radius:50%;border:2px solid rgba(255,255,255,.34);
   background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.34),rgba(255,255,255,.05))}
@@ -367,6 +373,8 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
              0 0 36px -14px var(--sign-glow)}
 .sign__board::before{content:"";position:absolute;inset:4px;border-radius:10px;
   border:1px dashed rgba(255,255,255,.09);pointer-events:none}
+/* the aria-live wrapper — deliberately excludes the countdown */
+.sign__live{display:flex;flex-direction:column;align-items:center;gap:.14rem}
 .sign__row{display:flex;align-items:center;gap:.42rem}
 .sign__dot{width:8px;height:8px;flex:none;border-radius:50%;background:var(--sign-accent);
   box-shadow:0 0 9px 1px var(--sign-accent);animation:signPulse 2s ease-in-out infinite}
@@ -539,22 +547,24 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
   background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.22)}
 .hours.is-closed{background:rgba(255,176,32,.07);border-color:rgba(255,176,32,.24)}
 .hours__head{display:flex;align-items:center;gap:.42rem;flex-wrap:wrap}
-.hours__dot{width:7px;height:7px;flex:none;border-radius:50%;background:#4ade80;
-  box-shadow:0 0 8px 1px rgba(74,222,128,.85);animation:signPulse 2s ease-in-out infinite}
-.hours.is-closed .hours__dot{background:#ffb020;box-shadow:0 0 8px 1px rgba(255,176,32,.85)}
+.hours__dot{width:7px;height:7px;flex:none;border-radius:50%;background:var(--sign-accent);
+  box-shadow:0 0 8px 1px var(--sign-accent);animation:signPulse 2s ease-in-out infinite}
 .hours__label{font-family:var(--font-head);font-weight:800;font-size:.8rem;
-  color:#86efac;white-space:nowrap}
-.hours__clock{font-size:.95rem;color:#4ade80}
-.hours.is-closed .hours__clock{color:#ffb020}
-.hours.is-closed .hours__label{color:#ffd88a}
+  color:var(--sign-meta);white-space:nowrap}
+.hours__clock{font-size:.95rem;color:var(--sign-accent)}
 .hours__time{font-family:var(--font-head);font-weight:800;font-size:.79rem;color:#fff;
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
   padding:.14rem .52rem;border-radius:99px;white-space:nowrap}
 .hours__list{display:grid;gap:.3rem;margin-top:.52rem}
 .hours__list li{display:flex;align-items:flex-start;gap:.42rem;font-size:.76rem;
   color:var(--muted);line-height:1.45}
-.hours__list .ico{font-size:.9rem;flex:none;margin-top:.16rem;color:#4ade80}
+.hours__list .ico{font-size:.9rem;flex:none;margin-top:.16rem;color:var(--sign-accent)}
 .hours__list b{color:var(--text);font-weight:700}
+/* live countdown row — rendered by the same code as the hero sign chip */
+.hours__count{display:flex;flex-wrap:wrap;align-items:center;gap:.26rem .5rem;margin-top:.6rem;
+  padding-top:.55rem;border-top:1px dashed rgba(255,255,255,.13)}
+.hours__count-label{font-size:.57rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--sign-meta);white-space:nowrap}
 .tel{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.86);
   padding:.38rem .7rem;border-radius:10px;background:rgba(255,255,255,.05);
   border:1px solid var(--stroke);transition:all .25s var(--ease)}
@@ -904,7 +914,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   <div class="wrap">
 
     <!-- ══ LIVE OPEN / CLOSED SHOP SIGN — driven by CONFIG.hours ══ -->
-    <div class="sign" id="shopSign" role="status" aria-live="polite">
+    <div class="sign" id="shopSign">
       <span class="sign__hook" aria-hidden="true"></span>
       <div class="sign__swing">
         <svg class="sign__cords" viewBox="0 0 200 42" preserveAspectRatio="none" aria-hidden="true" focusable="false">
@@ -912,19 +922,23 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
           <line x1="100" y1="1" x2="130" y2="42"/>
         </svg>
         <div class="sign__board">
-          <span class="sign__row">
-            <span class="sign__dot" aria-hidden="true"></span>
-            <span class="sign__status" id="signStatus">Babyz Pizza is now open</span>
+          <!-- only the open/closed message is a live region. The countdown sits
+               OUTSIDE it: inside, a per-second change would make a screen reader
+               announce the timer forever. As role="timer" it stays readable on
+               demand but is never announced automatically. -->
+          <span class="sign__live" role="status" aria-live="polite">
+            <span class="sign__row">
+              <span class="sign__dot" aria-hidden="true"></span>
+              <span class="sign__status" id="signStatus">Babyz Pizza is now open</span>
+            </span>
+            <span class="sign__meta" id="signMeta">Delivery till 11:30 pm · Takeaway till 1:30 am</span>
           </span>
-          <span class="sign__meta" id="signMeta">Delivery till 11:30 pm · Takeaway till 1:30 am</span>
-          <!-- live countdown: aria-hidden so a per-second tick can't spam a
-               screen reader; the open/closed state above already says it in words -->
-          <span class="sign__count" id="signCount" aria-hidden="true">
-            <span class="sign__count-label" id="cdLabel">Opens in</span>
+          <span class="sign__count" data-cd role="timer">
+            <span class="sign__count-label" data-cd-label>Opens in</span>
             <span class="cd">
-              <span class="cd__n" id="cdH">00</span><span class="cd__u">hrs</span>
-              <span class="cd__n" id="cdM">00</span><span class="cd__u">mins</span>
-              <span class="cd__n" id="cdS">00</span><span class="cd__u">secs</span>
+              <span class="cd__n" data-cd-h>00</span><span class="cd__u">hrs</span>
+              <span class="cd__n" data-cd-m>00</span><span class="cd__u">mins</span>
+              <span class="cd__n" data-cd-s>00</span><span class="cd__u">secs</span>
             </span>
           </span>
         </div>
@@ -945,7 +959,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
 
     <div class="hero__badges">
       <span class="pill pill--veg"><svg class="ico"><use href="#i-leaf"/></svg> 100% Fresh</span>
-      <span class="pill pill--fire"><svg class="ico"><use href="#i-flame"/></svg> Stone Baked</span>
+      <span class="pill pill--fire"><svg class="ico"><use href="#i-flame"/></svg> Home Baked</span>
       <span class="pill pill--gold"><svg class="ico"><use href="#i-truck"/></svg> Free Delivery ≤ 3 km</span>
       <span class="pill pill--fire"><svg class="ico"><use href="#i-gift"/></svg> Buy 3 Get 1 Free</span>
     </div>
@@ -976,7 +990,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     <header class="sec-head reveal">
       <span class="eyebrow">Our Menu</span>
       <h2 class="sec-title">Craft Your <span class="grad-text">Perfect</span> Slice</h2>
-      <p class="sec-sub">Every pizza is hand-stretched, stone-baked and loaded with premium toppings. Tap <strong>+</strong> to build your order — offers apply automatically.</p>
+      <p class="sec-sub">Every pizza is hand-stretched, home baked and loaded with premium toppings. Tap <strong>+</strong> to build your order — offers apply automatically.</p>
       <span class="divider"></span>
     </header>
 
@@ -1158,6 +1172,15 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
                 <li><svg class="ico"><use href="#i-truck"/></svg><span><b>Delivery</b> — only if ordered before <b>11:30 pm</b></span></li>
                 <li><svg class="ico"><use href="#i-bag"/></svg><span><b>Takeaway</b> — available till <b>1:30 am</b></span></li>
               </ul>
+              <!-- second instance of the same live countdown; see .sign__count -->
+              <div class="hours__count" data-cd role="timer">
+                <span class="hours__count-label" data-cd-label>Opens in</span>
+                <span class="cd">
+                  <span class="cd__n" data-cd-h>00</span><span class="cd__u">hrs</span>
+                  <span class="cd__n" data-cd-m>00</span><span class="cd__u">mins</span>
+                  <span class="cd__n" data-cd-s>00</span><span class="cd__u">secs</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -1245,7 +1268,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
           </span>
         </div>
         <p style="color:var(--muted);font-size:.84rem;margin-top:.9rem;max-width:38ch">
-          Hand-stretched, stone-baked pizzas made fresh to order. Order on WhatsApp or give us a call — we deliver hot, upto 3 km.
+          Hand-stretched, home baked pizzas made fresh to order. Order on WhatsApp or give us a call — we deliver hot, upto 3 km.
         </p>
         <div class="socials" style="margin-top:1.1rem">
           <a class="social social--wa" href="https://wa.me/918017414711" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -2094,19 +2117,38 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
 
+  // Every [data-cd] block on the page — the hero sign chip and the hours block
+  // in the contact section — is driven from here, so they can never disagree.
+  // The node list is resolved once; none of that markup is ever re-rendered.
+  let cdBlocks = null;
+  function countdownBlocks() {
+    if (cdBlocks) return cdBlocks;
+    cdBlocks = [];
+    $$('[data-cd]').forEach(function (root) {
+      const label = $('[data-cd-label]', root);
+      const h = $('[data-cd-h]', root);
+      const m = $('[data-cd-m]', root);
+      const s = $('[data-cd-s]', root);
+      if (label && h && m && s) cdBlocks.push({ label: label, h: h, m: m, s: s });
+    });
+    return cdBlocks;
+  }
+
   function renderCountdown(nowSeconds) {
-    const hEl = $('#cdH'), mEl = $('#cdM'), sEl = $('#cdS'), labelEl = $('#cdLabel');
-    if (!hEl || !mEl || !sEl || !labelEl) return;
+    const blocks = countdownBlocks();
+    if (!blocks.length) return;
     const nx = nextChange(nowSeconds);
     const rem = nx.seconds;
-    const h = Math.floor(rem / 3600);
-    const m = Math.floor((rem % 3600) / 60);
-    const s = rem % 60;
-    // only touch the DOM when a value actually changed — keeps it flicker-free
-    if (hEl.textContent !== pad2(h)) hEl.textContent = pad2(h);
-    if (mEl.textContent !== pad2(m)) mEl.textContent = pad2(m);
-    if (sEl.textContent !== pad2(s)) sEl.textContent = pad2(s);
-    if (labelEl.textContent !== nx.label) labelEl.textContent = nx.label;
+    const hh = pad2(Math.floor(rem / 3600));
+    const mm = pad2(Math.floor((rem % 3600) / 60));
+    const ss = pad2(rem % 60);
+    blocks.forEach(function (b) {
+      // only touch the DOM when a value actually changed — keeps it flicker-free
+      if (b.h.textContent !== hh) b.h.textContent = hh;
+      if (b.m.textContent !== mm) b.m.textContent = mm;
+      if (b.s.textContent !== ss) b.s.textContent = ss;
+      if (b.label.textContent !== nx.label) b.label.textContent = nx.label;
+    });
   }
 
   function openState(nowMinutes) {
