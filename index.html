@@ -344,7 +344,7 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
 
 /* ── hanging shop sign — live open / closed status ── */
 .sign{position:relative;display:flex;flex-direction:column;align-items:center;
-  width:clamp(200px,58vw,254px);max-width:100%;margin:0 auto clamp(1.1rem,3vw,1.7rem);padding-top:12px;
+  width:clamp(214px,60vw,258px);max-width:100%;margin:0 auto clamp(1.1rem,3vw,1.7rem);padding-top:12px;
   --sign-accent:#4ade80;--sign-glow:rgba(34,197,94,.55);--sign-meta:#86efac}
 .sign--closed{--sign-accent:#ffb020;--sign-glow:rgba(255,176,32,.5);--sign-meta:#ffd88a}
 .sign__hook{position:absolute;top:0;left:50%;transform:translateX(-50%);
@@ -375,6 +375,16 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
   font-size:clamp(.8rem,2.7vw,.94rem);color:#fff}
 .sign__meta{font-size:clamp(.63rem,2.1vw,.72rem);font-weight:600;color:var(--sign-meta);
   text-align:center;line-height:1.42;white-space:pre-line}
+
+/* live countdown chip — tabular figures so the digits never jitter */
+.sign__count{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
+  gap:.24rem .38rem;margin-top:.4rem;padding:.24rem .58rem;border-radius:99px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13)}
+.sign__count-label{font-size:.57rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--sign-meta);white-space:nowrap}
+.cd{display:flex;align-items:center;gap:.3rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.cd__n{font-family:var(--font-head);font-weight:800;font-size:.73rem;color:#fff;letter-spacing:.01em}
+.cd__u{font-size:.57rem;font-weight:700;color:var(--sign-meta);margin-right:.16rem}
 
 /* ══════════════════════════════════════════════════════════════
    MENU
@@ -907,6 +917,16 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
             <span class="sign__status" id="signStatus">Babyz Pizza is now open</span>
           </span>
           <span class="sign__meta" id="signMeta">Delivery till 11:30 pm · Takeaway till 1:30 am</span>
+          <!-- live countdown: aria-hidden so a per-second tick can't spam a
+               screen reader; the open/closed state above already says it in words -->
+          <span class="sign__count" id="signCount" aria-hidden="true">
+            <span class="sign__count-label" id="cdLabel">Opens in</span>
+            <span class="cd">
+              <span class="cd__n" id="cdH">00</span><span class="cd__u">hrs</span>
+              <span class="cd__n" id="cdM">00</span><span class="cd__u">mins</span>
+              <span class="cd__n" id="cdS">00</span><span class="cd__u">secs</span>
+            </span>
+          </span>
         </div>
       </div>
     </div>
@@ -2029,23 +2049,64 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
      The visitor's own timezone is irrelevant: we always resolve IST,
      so someone browsing from anywhere sees the correct state.
      ══════════════════════════════════════════════════════════════ */
-  function istMinutesNow() {
+  // Seconds since IST midnight (0..86399). Always resolved in the kitchen's own
+  // timezone, never the visitor's.
+  function istSecondsNow() {
     const H = CONFIG.hours;
     try {
       const parts = new Intl.DateTimeFormat('en-GB', {
-        timeZone: H.tz, hour: '2-digit', minute: '2-digit', hourCycle: 'h23',
+        timeZone: H.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
       }).formatToParts(new Date());
-      let h = 0, m = 0;
+      let h = 0, m = 0, sec = 0;
       parts.forEach(function (p) {
-        if (p.type === 'hour') h = parseInt(p.value, 10) % 24;  // some engines emit "24"
+        if (p.type === 'hour') h = parseInt(p.value, 10) % 24;   // some engines emit "24"
         if (p.type === 'minute') m = parseInt(p.value, 10);
+        if (p.type === 'second') sec = parseInt(p.value, 10);
       });
-      return h * 60 + m;
+      return h * 3600 + m * 60 + sec;
     } catch (e) {
       // Fallback for engines without timeZone support: IST is a fixed UTC+05:30.
       const d = new Date();
-      return (d.getUTCHours() * 60 + d.getUTCMinutes() + 330) % 1440;
+      return (d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds() + 19800) % 86400;
     }
+  }
+
+  function istMinutesNow() { return Math.floor(istSecondsNow() / 60); }
+
+  // How long until the next state change, in seconds, plus what to call it.
+  // Closed -> counts down to 7:00 pm; open -> counts down to 1:30 am.
+  function nextChange(nowSeconds) {
+    const H = CONFIG.hours;
+    const opensAt  = H.openHour * 3600 + H.openMin * 60;
+    const closesAt = H.closeHour * 3600 + H.closeMin * 60;
+    const now = (nowSeconds == null) ? istSecondsNow() : nowSeconds;
+    const isOpen = now >= opensAt || now < closesAt;
+    let target;
+    if (!isOpen) {
+      target = opensAt;                       // always later today (01:30 -> 19:00)
+    } else if (now >= opensAt) {
+      target = 86400 + closesAt;              // evening shift, closes after midnight
+    } else {
+      target = closesAt;                      // small hours, closes at 01:30 today
+    }
+    return { isOpen: isOpen, label: isOpen ? 'Closes in' : 'Opens in', seconds: Math.max(0, target - now) };
+  }
+
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  function renderCountdown(nowSeconds) {
+    const hEl = $('#cdH'), mEl = $('#cdM'), sEl = $('#cdS'), labelEl = $('#cdLabel');
+    if (!hEl || !mEl || !sEl || !labelEl) return;
+    const nx = nextChange(nowSeconds);
+    const rem = nx.seconds;
+    const h = Math.floor(rem / 3600);
+    const m = Math.floor((rem % 3600) / 60);
+    const s = rem % 60;
+    // only touch the DOM when a value actually changed — keeps it flicker-free
+    if (hEl.textContent !== pad2(h)) hEl.textContent = pad2(h);
+    if (mEl.textContent !== pad2(m)) mEl.textContent = pad2(m);
+    if (sEl.textContent !== pad2(s)) sEl.textContent = pad2(s);
+    if (labelEl.textContent !== nx.label) labelEl.textContent = nx.label;
   }
 
   function openState(nowMinutes) {
@@ -2059,6 +2120,20 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     // Delivery stops at 11:30 pm; the tail of the night is takeaway only.
     const deliveryOpen = now >= opensAt && now < cutoff;
     return { isOpen: isOpen, deliveryOpen: deliveryOpen };
+  }
+
+  // The sign is fully determined by these two flags. When either flips we
+  // re-render the whole sign; otherwise a tick only moves the countdown digits.
+  function stateKey(st) {
+    return (st.isOpen ? 'open' : 'closed') + '|' + (st.deliveryOpen ? 'delivery' : 'takeaway');
+  }
+  let lastStateKey = null;
+
+  function tickCountdown() {
+    const secs = istSecondsNow();                       // one clock read per tick
+    const st = openState(Math.floor(secs / 60));
+    if (stateKey(st) !== lastStateKey) { renderShopSign(); return; }
+    renderCountdown(secs);
   }
 
   function renderShopSign() {
@@ -2090,6 +2165,9 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     // mirror the state onto the hours block in the contact section
     const hours = $('.hours');
     if (hours) hours.classList.toggle('is-closed', !st.isOpen);
+
+    lastStateKey = stateKey(st);
+    renderCountdown();
   }
 
   /* ══════════════════════════════════════════════════════════════
@@ -2110,8 +2188,11 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   onScroll();
   observeReveal();
 
-  // keep the sign honest if the page is left open across the 7:00 pm / 1:30 am boundary
-  setInterval(renderShopSign, 60000);
+  // One tick a second keeps the countdown live AND catches the 7:00 pm /
+  // 11:30 pm / 1:30 am boundaries within a second of them happening. Each tick
+  // recomputes from the clock rather than decrementing, so a throttled
+  // background tab can never drift.
+  setInterval(tickCountdown, 1000);
 
   // safety net: if fonts/images shift things around, re-check the reveal state
   window.addEventListener('load', function () { onScroll(); observeReveal(); });
