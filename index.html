@@ -1001,7 +1001,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
           <circle cx="9" cy="9" r="4" fill="#22C55E"/>
         </svg>
         <span class="tab__label tab__label--full">Veg Pizzas</span><span class="tab__label tab__label--short">Veg</span>
-        <span class="tab__count" data-count="veg">4</span>
+        <span class="tab__count" data-count="veg">5</span>
         <span class="tab__cart" data-cart="veg" hidden></span>
       </button>
       <button class="tab" data-cat="nonveg" id="tab-nonveg" role="tab" aria-selected="false" aria-controls="menu-grid">
@@ -1019,7 +1019,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
           <path d="M9 4L10.5 7.5H14L11.2 9.5L12.5 13L9 10.8L5.5 13L6.8 9.5L4 7.5H7.5L9 4Z" fill="#A855F7"/>
         </svg>
         <span class="tab__label tab__label--full">Combos</span><span class="tab__label tab__label--short">Combos</span>
-        <span class="tab__count" data-count="combos">6</span>
+        <span class="tab__count" data-count="combos">5</span>
         <span class="tab__cart" data-cart="combos" hidden></span>
       </button>
     </div>
@@ -1429,11 +1429,17 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
         ingredients:['Sweet Corn','Mozzarella'], badge:null, isCombo:false,
         image:'./images/Corn Cheese Delight Pizza.jpeg' },
       { id:'v3', name:'Fiery Veg Pizza', price:160,
-        ingredients:['Red Paprika','Jalapenos','Onion','Capsicum','Mozzarella'], badge:'🌶️ Spicy', isCombo:false,
+        ingredients:['Red Paprika','Jalapenos','Onion','Capsicum','Black Olives','Mozzarella'], badge:'🌶️ Spicy', isCombo:false,
         image:'./images/Fiery Veg Pizza.jpeg' },
-      { id:'v4', name:'Countryside Veggies Pizza', price:160,
-        ingredients:['Fresh Olives','Mushroom','Onion','Capsicum','Mozzarella'], badge:null, isCombo:false,
-        image:'./images/Countryside Veggies Pizza.jpeg' },
+      // NOTE: id 'v4' (Countryside Veggies) is retired, not reused. A cart saved
+      // in localStorage can still hold v4 — reusing that id would silently turn
+      // a customer's saved pizza into a different one at a different price.
+      { id:'v5', name:'Peppy Paneer Pizza', price:160,
+        ingredients:['Onion','Capsicum','Fresh Paneer','Mozzarella'], badge:null, isCombo:false,
+        image:'./images/Peppy Paneer Pizza.jpg' },
+      { id:'v6', name:'Veg Overloaded Pizza', price:180,
+        ingredients:['Onion','Capsicum','Black Olives','Jalapenos','Red Paprika','Golden Corn','Mozzarella'], badge:null, isCombo:false,
+        image:'./images/Veg Overloaded Pizza.jpg' },
     ],
     nonveg: [
       { id:'n1', name:'Chicken Sausage Pizza', price:180,
@@ -1443,7 +1449,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
         ingredients:['Chicken Pepperoni','Red Paprika','Mozzarella'], badge:'🌶️ Spicy', isCombo:false,
         image:'./images/Chicken Pepperoni Pizza.jpeg' },
       { id:'n3', name:'Mexican Sausage Supreme', price:190,
-        ingredients:['Chicken Sausage','Black Olives','Jalapenos','Onion','Mozzarella'], badge:null, isCombo:false,
+        ingredients:['Chicken Sausage','Black Olives','Jalapenos','Onion','Mozzarella'], badge:'🌶️ Spicy', isCombo:false,
         image:'./images/mexican-sausage-supreme-pizza.jpeg' },
     ],
     combos: [
@@ -1453,9 +1459,9 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
       { id:'c2', name:'Margherita + Corn Cheese Combo', subtitle:'+ Free Cold Drink (200ml)', price:255,
         ingredients:['Margherita','Corn Cheese Delight','Free Cold Drink'], badge:null, isCombo:true,
         image:'./images/Corn Cheese Delight and Margherita Combo.jpeg' },
-      { id:'c3', name:'Fiery Veg + Countryside Veggies Combo', subtitle:'+ Free Cold Drink (200ml)', price:285,
-        ingredients:['Fiery Veg Pizza','Countryside Veggies','Free Cold Drink'], badge:null, isCombo:true,
-        image:'./images/Fiery Veg + Countryside Veggies Combo.jpeg' },
+      // NOTE: id 'c3' (Fiery Veg + Countryside Veggies) is retired, not reused.
+      // The ids below are deliberately NOT renumbered — a saved cart holding c4
+      // would otherwise resolve to a different combo at a different price.
       { id:'c4', name:'Fiery Veg + Chicken Sausage Combo', subtitle:'+ Free Cold Drink (200ml)', price:295,
         ingredients:['Fiery Veg Pizza','Chicken Sausage','Free Cold Drink'], badge:null, isCombo:true,
         image:'./images/Fiery Veg and Chicken Sausage Combo.jpeg' },
