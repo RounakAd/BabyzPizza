@@ -397,6 +397,43 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
    countdown keeps its familiar hrs / mins / secs shape */
 .cd__d{display:inline-flex;align-items:center;gap:.3rem}
 .cd__d.is-off{display:none}
+/* the big banner below the hero uses a much larger version of the same chip */
+.cd--xl{gap:.55rem}
+.cd--xl .cd__n{font-size:clamp(1.4rem,4.8vw,2.3rem);letter-spacing:0}
+.cd--xl .cd__u{font-size:clamp(.58rem,1.7vw,.74rem);margin-right:.24rem}
+
+/* ── ordering paused (CONFIG.closure.status === 'closed') ──
+   Anything that would place or claim an order is taken out of action, while
+   the WhatsApp / call routes stay live. */
+.is-disabled{pointer-events:none!important;opacity:.45;filter:grayscale(.55);
+  cursor:not-allowed}
+.card__order:disabled,.step:disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+
+/* ── CLOSED TODAY banner, directly below the hero ── */
+.shut{padding:0 0 clamp(1.6rem,4.5vw,3rem)}
+.shut__card{position:relative;overflow:hidden;text-align:center;
+  padding:clamp(1.7rem,4.6vw,3rem) clamp(1.1rem,3.5vw,2.4rem);border-radius:var(--r-lg);
+  background:linear-gradient(168deg,rgba(255,176,32,.14),rgba(11,15,23,.72) 62%);
+  border:1px solid rgba(255,176,32,.32)}
+.shut__glow{position:absolute;left:0;right:0;bottom:-45%;height:75%;pointer-events:none;
+  background:radial-gradient(ellipse at 50% 100%,rgba(255,176,32,.3),transparent 70%)}
+.shut__badge{position:relative;display:inline-flex;align-items:center;gap:.44rem;
+  font-size:.66rem;font-weight:800;letter-spacing:.11em;text-transform:uppercase;
+  color:#ffd88a;background:rgba(255,176,32,.16);border:1px solid rgba(255,176,32,.34);
+  padding:.32rem .76rem;border-radius:99px}
+.shut__badge .ico{font-size:.85rem}
+.shut__title{position:relative;font-family:var(--font-head);font-weight:900;letter-spacing:-.025em;
+  font-size:clamp(2.1rem,7.5vw,3.6rem);line-height:1.04;margin-top:.9rem;color:#fff}
+.shut__meta{position:relative;margin-top:.55rem;font-weight:700;
+  font-size:clamp(.88rem,2.5vw,1.05rem);color:#ffd88a}
+.shut__cd{position:relative;display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  margin-top:1.35rem}
+.shut__cd-label{font-size:.62rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
+  color:#ffd88a}
+.shut__note{position:relative;margin:1.4rem auto 0;max-width:46ch;
+  font-size:clamp(.78rem,2.2vw,.86rem);color:var(--muted);line-height:1.6}
+.shut__ctas{position:relative;display:flex;flex-wrap:wrap;gap:.7rem;justify-content:center;
+  margin-top:1.35rem}
 
 /* ══════════════════════════════════════════════════════════════
    MENU
@@ -932,7 +969,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
       <div class="ribbon__row">
         <span class="ribbon__tag" style="background:rgba(255,87,34,.28);color:#ffcbb8;border:1px solid rgba(255,87,34,.45)">Offer 1</span>
         <span class="ribbon__text">Buy any <b style="color:#FFC107">3 Pizzas</b>, Get <b style="color:#FF8A3D">1 FREE</b><span class="ribbon__more"> + Free Delivery upto 3 km</span></span>
-        <a class="btn btn--primary btn--sm ribbon__cta" href="https://wa.me/918017414711"
+        <a class="btn btn--primary btn--sm ribbon__cta" href="https://wa.me/918017414711" data-order-action
            data-wa="Hi Babyz Pizza! I'd like to claim the Buy 3 Get 1 Free offer!" target="_blank" rel="noopener">
           <span>🎉</span> Claim
         </a>
@@ -941,7 +978,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
       <div class="ribbon__row">
         <span class="ribbon__tag" style="background:rgba(255,193,7,.22);color:#ffe08a;border:1px solid rgba(255,193,7,.45)">Offer 2</span>
         <span class="ribbon__text">Flat <b style="color:#FFC107">₹50 OFF</b> on any <b>2 Pizzas</b><span class="ribbon__more"> — T&amp;C Apply*</span></span>
-        <a class="btn btn--gold btn--sm ribbon__cta" href="https://wa.me/918017414711"
+        <a class="btn btn--gold btn--sm ribbon__cta" href="https://wa.me/918017414711" data-order-action
            data-wa="Hi Babyz Pizza! I'd like to claim the Rs.50 off offer!" target="_blank" rel="noopener">
           <span>💰</span> Claim
         </a>
@@ -978,7 +1015,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
       <a class="chip-offer" href="#offers" aria-label="Buy 3 Get 1 Free offer">
         <svg class="ico" style="font-size:.95rem"><use href="#i-gift"/></svg> Buy 3 Get 1 Free
       </a>
-      <a class="btn btn--primary btn--sm" style="display:none" href="https://wa.me/918017414711"
+      <a class="btn btn--primary btn--sm" style="display:none" href="https://wa.me/918017414711" data-order-action
          data-wa="Hi Babyz Pizza! I'd like to place an order." target="_blank" rel="noopener" id="navOrder">
         <svg class="ico"><use href="#i-chat"/></svg> Order Now
       </a>
@@ -1008,8 +1045,9 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   <a class="drawer__link drawer-link" href="#contact"><span>📍</span> Contact</a>
   <span class="drawer__hr"></span>
   <a class="btn btn--wa drawer__cta" href="https://wa.me/918017414711"
-     data-wa="Hi Babyz Pizza! I'd like to place an order." target="_blank" rel="noopener">
-    <svg class="ico ico--brand"><use href="#i-wa"/></svg> Order on WhatsApp
+     data-wa="Hi Babyz Pizza! I'd like to place an order."
+     data-wa-closed="Hi Babyz Pizza! I have a question." target="_blank" rel="noopener">
+    <svg class="ico ico--brand"><use href="#i-wa"/></svg> <span data-wa-label data-label-closed="Message on WhatsApp">Order on WhatsApp</span>
   </a>
   <a class="btn btn--ghost drawer__cta" href="tel:+918017414711">
     <svg class="ico"><use href="#i-phone"/></svg> Call to Order
@@ -1080,8 +1118,9 @@ Takeaway till 1:30 am</span>
         <svg class="ico"><use href="#i-utensils"/></svg> View Menu
       </a>
       <a class="btn btn--wa btn--lg" href="https://wa.me/918017414711"
-         data-wa="Hi Babyz Pizza! I'd like to place an order." target="_blank" rel="noopener">
-        <svg class="ico ico--brand"><use href="#i-wa"/></svg> Order on WhatsApp
+         data-wa="Hi Babyz Pizza! I'd like to place an order."
+         data-wa-closed="Hi Babyz Pizza! I have a question." target="_blank" rel="noopener">
+        <svg class="ico ico--brand"><use href="#i-wa"/></svg> <span data-wa-label data-label-closed="Message on WhatsApp">Order on WhatsApp</span>
       </a>
       <a class="btn btn--ghost btn--lg" href="tel:+918017414711">
         <svg class="ico"><use href="#i-phone"/></svg> Call
@@ -1092,6 +1131,41 @@ Takeaway till 1:30 am</span>
       <span>Explore</span>
       <svg class="ico"><use href="#i-chevron-down"/></svg>
     </a>
+  </div>
+</section>
+
+<!-- ══════════════ CLOSED TODAY ══════════════
+     Shown only while CONFIG.closure.status is 'closed'. The countdown uses the
+     same [data-cd] machinery as the hero sign and the hours block, so all three
+     always agree. Party / bulk orders stay available. -->
+<section class="shut" id="shut" hidden>
+  <div class="wrap">
+    <div class="shut__card glass ringed">
+      <span class="shut__glow" aria-hidden="true"></span>
+      <span class="shut__badge"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg> We're closed right now</span>
+      <h2 class="shut__title">Closed Today</h2>
+      <p class="shut__meta" id="shutMeta">Back tomorrow at 7:00 pm</p>
+      <div class="shut__cd" data-cd role="timer">
+        <span class="shut__cd-label" data-cd-label>Opens in</span>
+        <span class="cd cd--xl">
+          <span class="cd__d is-off" data-cd-days><span class="cd__n" data-cd-d>00</span><span class="cd__u">days</span></span>
+          <span class="cd__n" data-cd-h>00</span><span class="cd__u">hrs</span>
+          <span class="cd__n" data-cd-m>00</span><span class="cd__u">mins</span>
+          <span class="cd__n" data-cd-s>00</span><span class="cd__u">secs</span>
+        </span>
+      </div>
+      <p class="shut__note">The menu is open to browse, but ordering is paused while we're shut.
+        Party &amp; bulk orders are still welcome — just message or call us.</p>
+      <div class="shut__ctas">
+        <a class="btn btn--combo btn--lg" href="https://wa.me/918017414711"
+           data-wa="Hi Babyz Pizza! I'd like to inquire about party / bulk orders. Please share details." target="_blank" rel="noopener">
+          <svg class="ico ico--brand"><use href="#i-wa"/></svg> Party / Bulk Order
+        </a>
+        <a class="btn btn--ghost btn--lg" href="tel:+918017414711">
+          <svg class="ico"><use href="#i-phone"/></svg> Call Us
+        </a>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1163,7 +1237,7 @@ Takeaway till 1:30 am</span>
           <li><svg class="ico"><use href="#i-check"/></svg> Every 4 pizzas unlocks 1 free — 8 pizzas means 2 free</li>
           <li><svg class="ico"><use href="#i-info"/></svg> Not applicable on combos</li>
         </ul>
-        <a class="btn btn--primary offer-card__cta" href="https://wa.me/918017414711"
+        <a class="btn btn--primary offer-card__cta" href="https://wa.me/918017414711" data-order-action
            data-wa="Hi Babyz Pizza! I'd like to claim the Buy 3 Get 1 Free offer!" target="_blank" rel="noopener">
           <span>🎉</span> Claim Offer 1
         </a>
@@ -1182,7 +1256,7 @@ Takeaway till 1:30 am</span>
           <li><svg class="ico"><use href="#i-check"/></svg> Great for a quick two-pizza night</li>
           <li><svg class="ico"><use href="#i-info"/></svg> Not applicable on combos</li>
         </ul>
-        <a class="btn btn--gold offer-card__cta" href="https://wa.me/918017414711"
+        <a class="btn btn--gold offer-card__cta" href="https://wa.me/918017414711" data-order-action
            data-wa="Hi Babyz Pizza! I'd like to claim the Rs.50 off offer!" target="_blank" rel="noopener">
           <span>💰</span> Claim Offer 2
         </a>
@@ -1460,7 +1534,7 @@ Takeaway till 1:30 am</span>
         <div class="cartbar__save" id="cartSave" hidden></div>
       </div>
 
-      <button class="btn btn--wa cartbar__cta" id="cartOrder" disabled>
+      <button class="btn btn--wa cartbar__cta" id="cartOrder" data-order-action disabled>
         <svg class="ico ico--brand"><use href="#i-wa"/></svg> <span id="cartOrderLabel">Order</span>
       </button>
     </div>
@@ -1477,8 +1551,9 @@ Takeaway till 1:30 am</span>
     <svg class="ico"><use href="#i-arrow-up"/></svg>
   </button>
   <a class="fab fab--wa" href="https://wa.me/918017414711"
-     data-wa="Hi Babyz Pizza! I'd like to place an order." target="_blank" rel="noopener"
-     aria-label="Chat on WhatsApp" title="Order on WhatsApp">
+     data-wa="Hi Babyz Pizza! I'd like to place an order."
+     data-wa-closed="Hi Babyz Pizza! I have a question." target="_blank" rel="noopener"
+     aria-label="Chat on WhatsApp" title="Order on WhatsApp" data-title-closed="Message us on WhatsApp">
     <svg class="ico ico--brand"><use href="#i-wa"/></svg>
   </a>
   <a class="fab fab--call" href="tel:+918017414711" aria-label="Call to order" title="Call to order">
@@ -1548,7 +1623,7 @@ Takeaway till 1:30 am</span>
        so you don't have to remember to switch it back to 'open'.
        ══════════════════════════════════════════════════════════════ */
     closure: {
-      status: 'open',        // 'open' | 'closed'
+      status: 'closed',        // 'open' | 'closed'
       reopenDate: '',        // e.g. '22-09-2026'
       reopenTime: '',        // e.g. '7pm'
     },
@@ -1920,13 +1995,15 @@ Takeaway till 1:30 am</span>
         '<div class="card__foot">' +
           '<div class="stepper">' +
             '<button class="step js-minus" data-id="' + item.id + '" aria-label="Remove one ' + esc(item.name) + '"' +
-              (cart[item.id] ? '' : ' disabled') + '>' +
+              (cart[item.id] && !isShut() ? '' : ' disabled') + '>' +
               '<svg class="ico"><use href="#i-minus"/></svg></button>' +
             '<span class="step__val" id="qty-' + item.id + '">' + (cart[item.id] || 0) + '</span>' +
-            '<button class="step js-plus" data-id="' + item.id + '" aria-label="Add one ' + esc(item.name) + '">' +
+            '<button class="step js-plus" data-id="' + item.id + '" aria-label="Add one ' + esc(item.name) + '"' +
+              (isShut() ? ' disabled' : '') + '>' +
               '<svg class="ico"><use href="#i-plus"/></svg></button>' +
           '</div>' +
-          '<button class="card__order js-single" data-id="' + item.id + '" aria-label="Order ' + esc(item.name) + ' on WhatsApp">' +
+          '<button class="card__order js-single" data-id="' + item.id + '" aria-label="Order ' + esc(item.name) + ' on WhatsApp"' +
+            (isShut() ? ' disabled' : '') + '>' +
             '<svg class="ico ico--brand"><use href="#i-wa"/></svg> Order' +
           '</button>' +
         '</div>' +
@@ -1985,6 +2062,7 @@ Takeaway till 1:30 am</span>
   const cartListInner = $('#cartListInner');
 
   function syncCards() {
+    const shut = isShut();
     $$('.card', grid).forEach(function (card) {
       const id = card.dataset.id;
       const qty = cart[id] || 0;
@@ -1992,7 +2070,9 @@ Takeaway till 1:30 am</span>
       const val = $('#qty-' + id, card);
       if (val) val.textContent = qty;
       const minus = $('.js-minus', card);
-      if (minus) minus.disabled = qty === 0;
+      if (minus) minus.disabled = shut || qty === 0;
+      const plus = $('.js-plus', card);
+      if (plus) plus.disabled = shut;
     });
 
     // Tab badges: the grey pill always shows how many items the category holds.
@@ -2025,10 +2105,10 @@ Takeaway till 1:30 am</span>
       return '<div class="cartrow">' +
         '<div class="stepper">' +
           '<button class="step js-minus" data-id="' + l.item.id + '" aria-label="Remove one ' + esc(l.item.name) + '"' +
-            (l.qty ? '' : ' disabled') + '><svg class="ico"><use href="#i-minus"/></svg></button>' +
+            (l.qty && !isShut() ? '' : ' disabled') + '><svg class="ico"><use href="#i-minus"/></svg></button>' +
           '<span class="step__val">' + l.qty + '</span>' +
-          '<button class="step js-plus" data-id="' + l.item.id + '" aria-label="Add one ' + esc(l.item.name) + '">' +
-            '<svg class="ico"><use href="#i-plus"/></svg></button>' +
+          '<button class="step js-plus" data-id="' + l.item.id + '" aria-label="Add one ' + esc(l.item.name) + '"' +
+            (isShut() ? ' disabled' : '') + '><svg class="ico"><use href="#i-plus"/></svg></button>' +
         '</div>' +
         '<span class="cartrow__name">' + esc(l.item.name) + '</span>' +
         '<span class="cartrow__price">' + money(l.lineTotal) + '</span>' +
@@ -2075,8 +2155,11 @@ Takeaway till 1:30 am</span>
       cartMeta.textContent = p.nudge ? p.nudge.text : 'No offer applied yet';
     }
 
-    cartOrder.disabled = count === 0;
-    cartOrder.setAttribute('aria-label', 'Order ' + count + ' items on WhatsApp for ' + money(p.total));
+    // ordering is paused while the shop is shut
+    cartOrder.disabled = count === 0 || isShut();
+    cartOrder.setAttribute('aria-label', isShut()
+      ? 'Ordering is paused — the shop is closed'
+      : 'Order ' + count + ' items on WhatsApp for ' + money(p.total));
 
     cartbar.classList.toggle('is-open', count > 0);
     document.body.classList.toggle('cart-open', count > 0);
@@ -2088,8 +2171,9 @@ Takeaway till 1:30 am</span>
     $$('[data-wa]').forEach(function (el) {
       el.setAttribute('href', buildWA(el.dataset.wa));
     });
-    // the floating + nav WhatsApp buttons carry the full order when a cart exists
-    if (count > 0) {
+    // the floating + nav WhatsApp buttons carry the full order when a cart
+    // exists — but never while ordering is paused
+    if (count > 0 && !isShut()) {
       const msg = buildOrderMessage();
       $$('.fab--wa, #navOrder').forEach(function (el) { el.setAttribute('href', buildWA(msg)); });
     }
@@ -2110,11 +2194,14 @@ Takeaway till 1:30 am</span>
   }, true);
 
   document.addEventListener('click', function (e) {
+    // Belt and braces: the controls are already disabled, but a keyboard or
+    // programmatic click must not slip an order through while we're shut.
     const plus = e.target.closest('.js-plus');
-    if (plus) { addToCart(plus.dataset.id, 1); return; }
+    if (plus) { if (!isShut()) addToCart(plus.dataset.id, 1); return; }
 
     const minus = e.target.closest('.js-minus');
     if (minus) {
+      if (isShut()) return;
       const id = minus.dataset.id;
       setQty(id, (cart[id] || 0) - 1);
       return;
@@ -2127,6 +2214,7 @@ Takeaway till 1:30 am</span>
 
     const single = e.target.closest('.js-single');
     if (single) {
+      if (isShut()) return;
       const item = findItem(single.dataset.id);
       if (item) window.open(buildWA(buildSingleItemMessage(item)), '_blank', 'noopener');
       return;
@@ -2574,6 +2662,58 @@ Takeaway till 1:30 am</span>
     renderCountdown(n.seconds, n.dow);
   }
 
+  /* ══════════════════════════════════════════════════════════════
+     ORDERING PAUSE
+     While CONFIG.closure.status is 'closed', anything that would place or
+     claim an order is taken out of action — but the WhatsApp and phone
+     routes stay open, so customers can still reach us (and order in bulk).
+     ══════════════════════════════════════════════════════════════ */
+  function isShut() { return document.documentElement.classList.contains('is-shut'); }
+
+  let lastShut = null;
+  function applyClosureUI(closed) {
+    if (closed === lastShut) return;      // only do the work when it changes
+    lastShut = closed;
+    document.documentElement.classList.toggle('is-shut', closed);
+
+    // 1. order + claim actions — disabled for real, not just greyed out
+    $$('[data-order-action]').forEach(function (el) {
+      el.classList.toggle('is-disabled', closed);
+      if (closed) {
+        el.setAttribute('aria-disabled', 'true');
+        if (el.tagName === 'A') el.setAttribute('tabindex', '-1');
+      } else {
+        el.removeAttribute('aria-disabled');
+        if (el.tagName === 'A') el.removeAttribute('tabindex');
+      }
+    });
+    // the per-card Order buttons are re-created by renderMenu, so sweep them
+    $$('.js-single').forEach(function (b) { b.disabled = closed; });
+
+    // 2. WhatsApp buttons that stay usable swap to a non-order message
+    $$('[data-wa-closed]').forEach(function (el) {
+      if (el.dataset.waOpen == null) el.dataset.waOpen = el.dataset.wa;
+      el.dataset.wa = closed ? el.dataset.waClosed : el.dataset.waOpen;
+      el.setAttribute('href', buildWA(el.dataset.wa));
+    });
+    $$('[data-wa-label]').forEach(function (el) {
+      if (el.dataset.labelOpen == null) el.dataset.labelOpen = el.textContent.trim();
+      el.textContent = closed ? el.dataset.labelClosed : el.dataset.labelOpen;
+    });
+    $$('[data-title-closed]').forEach(function (el) {
+      if (el.dataset.titleOpen == null) el.dataset.titleOpen = el.getAttribute('title') || '';
+      el.setAttribute('title', closed ? el.dataset.titleClosed : el.dataset.titleOpen);
+    });
+
+    // 3. the big banner below the hero
+    const shut = $('#shut');
+    if (shut) shut.hidden = !closed;
+
+    // 4. the controls that depend on the state
+    syncCards();
+    renderCartList(priceCart());
+  }
+
   function renderShopSign() {
     const sign = $('#shopSign');
     if (!sign) return;
@@ -2624,6 +2764,11 @@ Takeaway till 1:30 am</span>
         if (nm && nm.textContent !== cl.when) nm.textContent = cl.when;
       }
     }
+
+    // the big banner below the hero, and the ordering pause
+    const shutMeta = $('#shutMeta');
+    if (shutMeta && cl) shutMeta.textContent = cl.when;
+    applyClosureUI(!!cl);
 
     lastStateKey = stateKey(st);
     renderCountdown(n.seconds, n.dow);
