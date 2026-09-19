@@ -393,6 +393,10 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
 .cd{display:flex;align-items:center;gap:.3rem;font-variant-numeric:tabular-nums;white-space:nowrap}
 .cd__n{font-family:var(--font-head);font-weight:800;font-size:.73rem;color:#fff;letter-spacing:.01em}
 .cd__u{font-size:.57rem;font-weight:700;color:var(--sign-meta);margin-right:.16rem}
+/* the days unit only shows when there are days to count, so the everyday
+   countdown keeps its familiar hrs / mins / secs shape */
+.cd__d{display:inline-flex;align-items:center;gap:.3rem}
+.cd__d.is-off{display:none}
 
 /* ══════════════════════════════════════════════════════════════
    MENU
@@ -582,6 +586,13 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
   padding-top:.55rem;border-top:1px dashed rgba(255,255,255,.13)}
 .hours__count-label{font-size:.57rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;
   color:var(--sign-meta);white-space:nowrap}
+/* shown only while CONFIG.closure.status is 'closed' */
+.hours__closure{display:none;align-items:center;gap:.42rem;margin-top:.5rem;
+  padding:.36rem .52rem;border-radius:8px;font-size:.74rem;font-weight:700;
+  color:#ffd88a;background:rgba(255,176,32,.14);border:1px solid rgba(255,176,32,.3)}
+.hours__closure.is-on{display:flex}
+.hours__closure b{color:#fff;font-weight:800}
+.hours__closure .ico{font-size:.9rem;flex:none}
 .tel{display:inline-flex;align-items:center;gap:.4rem;font-size:.8rem;font-weight:700;color:rgba(255,255,255,.86);
   padding:.38rem .7rem;border-radius:10px;background:rgba(255,255,255,.05);
   border:1px solid var(--stroke);transition:all .25s var(--ease)}
@@ -1035,6 +1046,7 @@ Takeaway till 1:30 am</span>
           <span class="sign__count" data-cd role="timer">
             <span class="sign__count-label" data-cd-label>Opens in</span>
             <span class="cd">
+              <span class="cd__d is-off" data-cd-days><span class="cd__n" data-cd-d>00</span><span class="cd__u">days</span></span>
               <span class="cd__n" data-cd-h>00</span><span class="cd__u">hrs</span>
               <span class="cd__n" data-cd-m>00</span><span class="cd__u">mins</span>
               <span class="cd__n" data-cd-s>00</span><span class="cd__u">secs</span>
@@ -1266,6 +1278,11 @@ Takeaway till 1:30 am</span>
                 <svg class="ico hours__clock" aria-hidden="true"><use href="#i-clock"/></svg>
                 <span class="hours__label">Open daily</span>
               </div>
+              <!-- shown only while CONFIG.closure.status is 'closed' -->
+              <div class="hours__closure" id="hoursClosure">
+                <svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>
+                <span><b>Closed Today</b> · <span id="hoursClosureMeta"></span></span>
+              </div>
               <!-- the row for today's schedule is highlighted by renderShopSign() -->
               <ul class="hours__list hours__list--sched">
                 <li class="hours__sched" data-days="week">
@@ -1285,6 +1302,7 @@ Takeaway till 1:30 am</span>
               <div class="hours__count" data-cd role="timer">
                 <span class="hours__count-label" data-cd-label>Opens in</span>
                 <span class="cd">
+                  <span class="cd__d is-off" data-cd-days><span class="cd__n" data-cd-d>00</span><span class="cd__u">days</span></span>
                   <span class="cd__n" data-cd-h>00</span><span class="cd__u">hrs</span>
                   <span class="cd__n" data-cd-m>00</span><span class="cd__u">mins</span>
                   <span class="cd__n" data-cd-s>00</span><span class="cd__u">secs</span>
@@ -1506,6 +1524,33 @@ Takeaway till 1:30 am</span>
         weekend: { open: '12:00 pm', close: '12:00 am', range: '12:00 pm – 12:00 am' },
         cutoff:  '11:00 pm',
       },
+    },
+
+    /* ══════════════════════════════════════════════════════════════
+       MANUAL CLOSURE  ←  THIS IS THE SWITCH. EDIT IT TO SHUT THE SHOP.
+       ──────────────────────────────────────────────────────────────
+       status: 'open'    → normal opening hours, everything as usual.
+       status: 'closed'  → the site says "Closed Today" and counts down to
+                           reopening, ignoring the normal schedule.
+
+       reopenDate / reopenTime are OPTIONAL. Fill them in to reopen at an
+       exact moment:
+           reopenDate: '22-09-2026'   (DD-MM-YYYY)
+           reopenTime: '7pm'          ('7pm' '9pm' '7:30pm' '19:00' '7 pm')
+
+       Leave EITHER blank and it works it out for you:
+           no date → tomorrow
+           no time → that day's normal opening time from the schedule above
+       So setting status:'closed' with both blank on a MONDAY counts down to
+       Tuesday 7:00 pm; on a FRIDAY it counts down to Saturday 12:00 pm.
+
+       The closure expires by itself the moment the reopening time arrives,
+       so you don't have to remember to switch it back to 'open'.
+       ══════════════════════════════════════════════════════════════ */
+    closure: {
+      status: 'open',        // 'open' | 'closed'
+      reopenDate: '',        // e.g. '22-09-2026'
+      reopenTime: '',        // e.g. '7pm'
     },
 
     offers: {
@@ -2311,6 +2356,96 @@ Takeaway till 1:30 am</span>
     return scPrev.crosses && now < scPrev.closeAt;
   }
 
+  /* ── MANUAL CLOSURE (CONFIG.closure) ─────────────────────────────
+     Lets the shop be shut regardless of the schedule. Returns null when we
+     are running normally, otherwise an object describing the reopening. */
+  const IST_OFFSET_MS = 19800000;   // UTC+05:30
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  // '7pm' · '9pm' · '7:30pm' · '19:00' · '7 pm'  →  {h, m}
+  function parseReopenTime(raw) {
+    const s = String(raw == null ? '' : raw).trim().toLowerCase().replace(/\s+/g, '');
+    if (!s) return null;
+    const m = s.match(/^(\d{1,2})(?::([0-5]\d))?(am|pm)?$/);
+    if (!m) return null;
+    let h = parseInt(m[1], 10);
+    const min = m[2] ? parseInt(m[2], 10) : 0;
+    const ap = m[3];
+    if (h > 23) return null;
+    if (ap === 'pm' && h < 12) h += 12;
+    if (ap === 'am' && h === 12) h = 0;
+    return { h: h, m: min };
+  }
+
+  // '22-09-2026' → {y, m, d}   (DD-MM-YYYY; also accepts / and .)
+  // '2026-09-22' is accepted too, since it can't be misread either way.
+  function parseReopenDate(raw) {
+    const s = String(raw == null ? '' : raw).trim();
+    if (!s) return null;
+    let m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/);      // YYYY-MM-DD
+    if (m) {
+      const y = parseInt(m[1], 10), mo = parseInt(m[2], 10), d = parseInt(m[3], 10);
+      if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+      return { y: y, m: mo, d: d };
+    }
+    m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);          // DD-MM-YYYY
+    if (!m) return null;
+    const d = parseInt(m[1], 10), mo = parseInt(m[2], 10), y = parseInt(m[3], 10);
+    if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+    return { y: y, m: mo, d: d };
+  }
+
+  function fmtClock(h, m) {
+    const ap = h >= 12 ? 'pm' : 'am';
+    let hh = h % 12;
+    if (hh === 0) hh = 12;
+    return hh + ':' + pad2(m) + ' ' + ap;
+  }
+
+  function closureTarget(nowMs) {
+    const c = CONFIG.closure;
+    if (!c || String(c.status).toLowerCase() !== 'closed') return null;
+
+    const now = (nowMs == null) ? Date.now() : nowMs;
+    const t  = parseReopenTime(c.reopenTime);
+    const dt = parseReopenDate(c.reopenDate);
+
+    // no date → tomorrow, in IST
+    let y, mo, d;
+    if (dt) {
+      y = dt.y; mo = dt.m; d = dt.d;
+    } else {
+      const ist = new Date(now + IST_OFFSET_MS);
+      const tom = new Date(Date.UTC(ist.getUTCFullYear(), ist.getUTCMonth(), ist.getUTCDate() + 1));
+      y = tom.getUTCFullYear(); mo = tom.getUTCMonth() + 1; d = tom.getUTCDate();
+    }
+
+    // no time → that day's normal opening time from the schedule
+    let h, mi;
+    if (t) {
+      h = t.h; mi = t.m;
+    } else {
+      const sc = scheduleFor(new Date(Date.UTC(y, mo - 1, d)).getUTCDay());
+      h = Math.floor(sc.openAt / 60);
+      mi = sc.openAt % 60;
+    }
+
+    const targetMs = Date.UTC(y, mo - 1, d, h, mi) - IST_OFFSET_MS;
+    const seconds = Math.floor((targetMs - now) / 1000);
+    // once the reopening moment arrives the closure is over, so the site never
+    // gets stuck showing a frozen 00:00:00
+    if (seconds <= 0) return null;
+
+    return {
+      seconds: seconds,
+      y: y, m: mo, d: d, h: h, mi: mi,
+      hasDate: !!dt,
+      hasTime: !!t,
+      when: dt ? 'Back on ' + d + ' ' + MONTHS[mo - 1] + ' at ' + fmtClock(h, mi)
+               : 'Back tomorrow at ' + fmtClock(h, mi),
+    };
+  }
+
   function openState(nowMinutes, dowArg) {
     const H = CONFIG.hours;
     const now = (nowMinutes == null) ? istMinutesNow() : nowMinutes;
@@ -2318,6 +2453,13 @@ Takeaway till 1:30 am</span>
     const sc     = scheduleFor(dow);
     const scPrev = scheduleFor((dow + 6) % 7);
     const cutoff = H.cutoffHour * 60 + H.cutoffMin;
+
+    // a manual closure beats the schedule entirely — nothing is open, and
+    // there is no delivery either
+    if (closureTarget()) {
+      return { isOpen: false, deliveryOpen: false, weekend: sc.weekend, dow: dow,
+               closedManually: true };
+    }
 
     const today = shiftToday(sc, now);
     // e.g. Saturday 00:30 is still running Friday night's shift
@@ -2334,6 +2476,13 @@ Takeaway till 1:30 am</span>
   // How long until the next state change, in seconds, plus what to call it.
   // Closed -> counts down to the next opening; open -> counts down to closing.
   function nextChange(nowSeconds, dowArg) {
+    // a manual closure counts down to a specific moment, which can be days
+    // away — so it bypasses the whole within-a-day calculation below
+    const cl = closureTarget();
+    if (cl) {
+      return { isOpen: false, label: 'Opens in', seconds: cl.seconds, target: cl };
+    }
+
     const nowSec = (nowSeconds == null) ? istSecondsNow() : nowSeconds;
     const nowMin = Math.floor(nowSec / 60);
     const dow = (dowArg == null) ? istWeekday() : dowArg;
@@ -2370,10 +2519,14 @@ Takeaway till 1:30 am</span>
     cdBlocks = [];
     $$('[data-cd]').forEach(function (root) {
       const label = $('[data-cd-label]', root);
+      const days  = $('[data-cd-days]', root);
+      const dnum  = $('[data-cd-d]', root);
       const h = $('[data-cd-h]', root);
       const m = $('[data-cd-m]', root);
       const s = $('[data-cd-s]', root);
-      if (label && h && m && s) cdBlocks.push({ label: label, h: h, m: m, s: s });
+      if (label && h && m && s) {
+        cdBlocks.push({ label: label, days: days, d: dnum, h: h, m: m, s: s });
+      }
     });
     return cdBlocks;
   }
@@ -2383,10 +2536,18 @@ Takeaway till 1:30 am</span>
     if (!blocks.length) return;
     const nx = nextChange(nowSeconds, dow);
     const rem = nx.seconds;
-    const hh = pad2(Math.floor(rem / 3600));
+    const dd = Math.floor(rem / 86400);
+    const hh = pad2(Math.floor((rem % 86400) / 3600));
     const mm = pad2(Math.floor((rem % 3600) / 60));
     const ss = pad2(rem % 60);
     blocks.forEach(function (b) {
+      // the days unit is hidden unless there really are days to count, so the
+      // everyday countdown keeps its familiar hrs / mins / secs shape
+      if (b.days) {
+        const off = dd === 0;
+        if (b.days.classList.contains('is-off') !== off) b.days.classList.toggle('is-off', off);
+        if (!off && b.d && b.d.textContent !== pad2(dd)) b.d.textContent = pad2(dd);
+      }
       // only touch the DOM when a value actually changed — keeps it flicker-free
       if (b.h.textContent !== hh) b.h.textContent = hh;
       if (b.m.textContent !== mm) b.m.textContent = mm;
@@ -2401,7 +2562,8 @@ Takeaway till 1:30 am</span>
   function stateKey(st) {
     return (st.isOpen ? 'open' : 'closed') + '|' +
            (st.deliveryOpen ? 'delivery' : 'takeaway') + '|' +
-           (st.weekend ? 'we' : 'wd');
+           (st.weekend ? 'we' : 'wd') + '|' +
+           (st.closedManually ? 'manual' : 'auto');
   }
   let lastStateKey = null;
 
@@ -2419,11 +2581,16 @@ Takeaway till 1:30 am</span>
     const n = istNow();
     const st = openState(Math.floor(n.seconds / 60), n.dow);
     const lbl = st.weekend ? H.labels.weekend : H.labels.week;
+    // non-null only while CONFIG.closure.status === 'closed'
+    const cl = st.closedManually ? closureTarget() : null;
 
     sign.classList.toggle('sign--closed', !st.isOpen);
 
     let status, meta;
-    if (!st.isOpen) {
+    if (cl) {
+      status = 'Closed Today';
+      meta = cl.when;
+    } else if (!st.isOpen) {
       status = 'Babyz Pizza is now closed';
       meta = 'Will open at ' + lbl.open + ' today';
     } else if (st.deliveryOpen) {
@@ -2448,6 +2615,15 @@ Takeaway till 1:30 am</span>
       const rowIsWeekend = row.dataset.days === 'weekend';
       row.dataset.today = (rowIsWeekend === st.weekend) ? 'true' : 'false';
     });
+    // manual-closure banner inside the hours block
+    const note = $('#hoursClosure');
+    if (note) {
+      note.classList.toggle('is-on', !!cl);
+      if (cl) {
+        const nm = $('#hoursClosureMeta');
+        if (nm && nm.textContent !== cl.when) nm.textContent = cl.when;
+      }
+    }
 
     lastStateKey = stateKey(st);
     renderCountdown(n.seconds, n.dow);
