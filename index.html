@@ -529,6 +529,9 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
    CONTACT
    ══════════════════════════════════════════════════════════════ */
 .grid-contact{display:grid;gap:clamp(1rem,2.4vw,1.6rem);grid-template-columns:1fr;align-items:start}
+/* `1fr` means minmax(auto,1fr), so a single item's min-content can widen the
+   track and shove every sibling past the viewport. Let the items shrink. */
+.grid-contact > *{min-width:0}
 @media (min-width:1000px){.grid-contact{grid-template-columns:1fr 1.05fr}}
 .stack{display:flex;flex-direction:column;gap:.85rem}
 .info{padding:1.05rem 1.15rem;display:flex;align-items:flex-start;gap:.95rem}
@@ -552,14 +555,28 @@ section[id]{scroll-margin-top:calc(var(--nav-h) + 14px)}
 .hours__label{font-family:var(--font-head);font-weight:800;font-size:.8rem;
   color:var(--sign-meta);white-space:nowrap}
 .hours__clock{font-size:.95rem;color:var(--sign-accent)}
-.hours__time{font-family:var(--font-head);font-weight:800;font-size:.79rem;color:#fff;
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);
-  padding:.14rem .52rem;border-radius:99px;white-space:nowrap}
 .hours__list{display:grid;gap:.3rem;margin-top:.52rem}
 .hours__list li{display:flex;align-items:flex-start;gap:.42rem;font-size:.76rem;
   color:var(--muted);line-height:1.45}
 .hours__list .ico{font-size:.9rem;flex:none;margin-top:.16rem;color:var(--sign-accent)}
 .hours__list b{color:var(--text);font-weight:700}
+/* the two schedules — today's row is highlighted and gets a "today" chip */
+.hours__list--sched{gap:.24rem;margin-top:.5rem}
+/* flex-wrap matters: these two spans are nowrap, and without wrapping the row's
+   min-content is wide enough to blow out the 1fr grid track on a narrow phone */
+.hours__sched{display:flex;align-items:baseline;justify-content:space-between;gap:.2rem .7rem;
+  flex-wrap:wrap;padding:.26rem .46rem;border-radius:8px;font-size:.75rem;
+  border:1px solid transparent;transition:background .25s var(--ease),border-color .25s var(--ease)}
+@media (max-width:400px){
+  .hours__sched{flex-direction:column;align-items:flex-start;gap:.06rem}
+}
+.hours__sched[data-today="true"]{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.14)}
+.hours__days{font-weight:800;color:var(--text);white-space:nowrap}
+.hours__sched[data-today="true"] .hours__days::after{
+  content:"today";margin-left:.42rem;font-size:.54rem;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;color:#0a0e17;background:var(--sign-accent);
+  padding:.07rem .32rem;border-radius:99px;vertical-align:.1em}
+.hours__range{font-family:var(--font-head);font-weight:800;color:var(--sign-meta);white-space:nowrap}
 /* live countdown row — rendered by the same code as the hero sign chip */
 .hours__count{display:flex;flex-wrap:wrap;align-items:center;gap:.26rem .5rem;margin-top:.6rem;
   padding-top:.55rem;border-top:1px dashed rgba(255,255,255,.13)}
@@ -748,6 +765,51 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   transition:opacity .8s var(--ease),transform .8s var(--ease);transition-delay:var(--d,0ms)}
 .reveal.is-in{opacity:1;transform:none}
 
+/* menu cards arrive like a delivery being set down */
+.reveal--deliver{transform:translateY(30px) rotate(-1.5deg) scale(.975)}
+.reveal--deliver.is-in{transform:none}
+
+/* the rule under a section heading stretches in like melted cheese */
+.sec-head.reveal .divider{transform:scaleX(0);
+  transition:transform .8s cubic-bezier(.2,.9,.25,1.06) .18s}
+.sec-head.reveal.is-in .divider{transform:scaleX(1)}
+
+/* ── scroll progress: the rider travels to your door as you read ── */
+.progress{position:fixed;top:0;left:0;right:0;height:3px;z-index:70;pointer-events:none}
+.progress__fill{display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left;
+  background:linear-gradient(90deg,#FF5722,#FFC107);box-shadow:0 0 14px rgba(255,87,34,.7)}
+.progress__rider{position:absolute;top:-3px;left:0;font-size:1.05rem;line-height:1;
+  transform:translateX(-50%) scaleX(-1);opacity:0;
+  filter:drop-shadow(0 3px 7px rgba(0,0,0,.75));transition:opacity .35s linear}
+.progress.is-active .progress__rider{opacity:1}
+
+/* ── loading splash ──
+   Pure CSS, so it clears itself even with JS disabled; the script also removes
+   the node once the fade has finished. */
+.splash{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:1.15rem;
+  background:radial-gradient(circle at 50% 42%,#141b28,#06090f 72%);
+  animation:splashOut .5s ease 1.05s forwards}
+@keyframes splashOut{to{opacity:0;visibility:hidden}}
+.splash__pizza{position:relative;width:76px;height:76px;border-radius:50%;
+  border:7px solid #C97A2B;
+  background:radial-gradient(circle at 38% 32%,#FFD98A,#F5B942 58%,#E39B2E);
+  box-shadow:0 14px 34px -10px rgba(0,0,0,.9),0 0 46px -10px rgba(255,138,61,.6);
+  animation:splashSpin 1.5s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes splashSpin{to{transform:rotate(360deg)}}
+.splash__pep{position:absolute;width:13px;height:13px;border-radius:50%;
+  left:var(--x);top:var(--y);transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 35% 32%,#E8534A,#B8241C);
+  box-shadow:inset 0 -1px 2px rgba(0,0,0,.35)}
+.splash__brand{font-family:var(--font-head);font-weight:800;font-size:1.05rem;color:#fff}
+.splash__brand em{font-style:normal;background:linear-gradient(120deg,#FF8A3D,#FFC107);
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.splash__bar{width:130px;height:3px;border-radius:99px;background:rgba(255,255,255,.13);overflow:hidden}
+.splash__bar i{display:block;height:100%;width:100%;border-radius:99px;
+  background:linear-gradient(90deg,#FF5722,#FFC107);transform-origin:left;
+  animation:splashFill 1.15s cubic-bezier(.3,.7,.3,1) forwards}
+@keyframes splashFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+
 /* ── skip link ── */
 .skip{position:absolute;left:-9999px;top:0;z-index:200;padding:.7rem 1.1rem;border-radius:0 0 12px 0;
   background:var(--primary);color:#fff;font-weight:700}
@@ -770,11 +832,47 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   /* the swing would otherwise freeze at its first keyframe, leaving the sign
      permanently tilted */
   .sign__swing{animation:none;transform:none}
+  /* the splash would otherwise sit there for its whole 1.05s delay before the
+     (now instant) fade — just skip it */
+  .splash{display:none}
+  /* a scooter tracking the scrollbar is motion; drop it */
+  .progress__rider{display:none}
+  /* starts collapsed, so it needs the settled state spelled out */
+  .sec-head.reveal .divider{transform:none}
 }
 </style>
+<noscript><style>
+  /* Without JS the reveal observer never runs, so anything that starts hidden
+     would stay hidden forever. Show it all, and drop the scroll chrome. */
+  .reveal{opacity:1;transform:none}
+  .sec-head.reveal .divider{transform:none}
+  .progress{display:none}
+</style></noscript>
 </head>
 
 <body>
+
+<!-- ══════════════ LOADING SPLASH ══════════════
+     Quick and pure CSS: it clears itself after ~1.5s even with JS disabled,
+     and the script removes the node once the fade is done. -->
+<div class="splash" id="splash" aria-hidden="true">
+  <div class="splash__pizza">
+    <span class="splash__pep" style="--x:50%;--y:23%"></span>
+    <span class="splash__pep" style="--x:25%;--y:44%"></span>
+    <span class="splash__pep" style="--x:75%;--y:43%"></span>
+    <span class="splash__pep" style="--x:39%;--y:74%"></span>
+    <span class="splash__pep" style="--x:65%;--y:71%"></span>
+  </div>
+  <p class="splash__brand">Babyz <em>Pizza</em></p>
+  <span class="splash__bar"><i></i></span>
+</div>
+
+<!-- ══════════════ SCROLL PROGRESS ══════════════
+     The rider travels to your door as you read down the page. -->
+<div class="progress" aria-hidden="true">
+  <span class="progress__fill" id="scrollFill"></span>
+  <span class="progress__rider" id="scrollRider">🛵</span>
+</div>
 
 <!-- ══════════════ ICON SPRITE ══════════════ -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -931,7 +1029,8 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
               <span class="sign__dot" aria-hidden="true"></span>
               <span class="sign__status" id="signStatus">Babyz Pizza is now open</span>
             </span>
-            <span class="sign__meta" id="signMeta">Delivery till 11:30 pm · Takeaway till 1:30 am</span>
+            <span class="sign__meta" id="signMeta">Delivery till 11:00 pm
+Takeaway till 1:30 am</span>
           </span>
           <span class="sign__count" data-cd role="timer">
             <span class="sign__count-label" data-cd-label>Opens in</span>
@@ -1166,11 +1265,21 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
                 <span class="hours__dot" data-live-dot aria-hidden="true"></span>
                 <svg class="ico hours__clock" aria-hidden="true"><use href="#i-clock"/></svg>
                 <span class="hours__label">Open daily</span>
-                <span class="hours__time">7:00 pm – 1:30 am</span>
               </div>
+              <!-- the row for today's schedule is highlighted by renderShopSign() -->
+              <ul class="hours__list hours__list--sched">
+                <li class="hours__sched" data-days="week">
+                  <span class="hours__days">Mon – Fri</span>
+                  <span class="hours__range">7:00 pm – 1:30 am</span>
+                </li>
+                <li class="hours__sched" data-days="weekend">
+                  <span class="hours__days">Sat – Sun</span>
+                  <span class="hours__range">12:00 pm – 12:00 am</span>
+                </li>
+              </ul>
               <ul class="hours__list">
-                <li><svg class="ico"><use href="#i-truck"/></svg><span><b>Delivery</b> — only if ordered before <b>11:30 pm</b></span></li>
-                <li><svg class="ico"><use href="#i-bag"/></svg><span><b>Takeaway</b> — available till <b>1:30 am</b></span></li>
+                <li><svg class="ico"><use href="#i-truck"/></svg><span><b>Delivery</b> — only if ordered before <b>11:00 pm</b></span></li>
+                <li><svg class="ico"><use href="#i-bag"/></svg><span><b>Takeaway</b> — till <b>1:30 am</b> (Mon–Fri) · <b>12:00 am</b> (Sat–Sun)</span></li>
               </ul>
               <!-- second instance of the same live countdown; see .sign__count -->
               <div class="hours__count" data-cd role="timer">
@@ -1268,7 +1377,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
           </span>
         </div>
         <p style="color:var(--muted);font-size:.84rem;margin-top:.9rem;max-width:38ch">
-          Hand-stretched, home baked pizzas made fresh to order. Order on WhatsApp or give us a call — we deliver hot, upto 3 km.
+          Home baked pizzas made fresh to order. Order on WhatsApp or give us a call — we deliver hot, upto 3 km.
         </p>
         <div class="socials" style="margin-top:1.1rem">
           <a class="social social--wa" href="https://wa.me/918017414711" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -1377,15 +1486,26 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     freeDeliveryKm: 3,
 
     // ── OPENING HOURS (Indian Standard Time) ──
+    // Mon–Fri and Sat–Sun run DIFFERENT windows, so this is day-aware.
     // Drives the "Open daily" block and the swinging shop sign in the hero.
     hours: {
       tz: 'Asia/Kolkata',
-      openHour: 19,   openMin: 0,     // 7:00 pm  — kitchen opens
-      closeHour: 1,   closeMin: 30,   // 1:30 am  — kitchen closes (crosses midnight)
-      cutoffHour: 23, cutoffMin: 30,  // 11:30 pm — last delivery order
-      openLabel: '7:00 pm',
-      closeLabel: '1:30 am',
-      cutoffLabel: '11:30 pm',
+
+      // Mon–Fri: 7:00 pm → 1:30 am. Crosses midnight, so the early hours belong
+      // to the previous day's shift.
+      week:    { openHour: 19, openMin: 0, closeHour: 1,  closeMin: 30 },
+
+      // Sat–Sun: 12:00 pm → 12:00 am. Ends exactly at midnight, same day.
+      weekend: { openHour: 12, openMin: 0, closeHour: 24, closeMin: 0 },
+
+      // Last delivery order — same every day. After this it's takeaway only.
+      cutoffHour: 23, cutoffMin: 0,
+
+      labels: {
+        week:    { open: '7:00 pm',  close: '1:30 am',  range: '7:00 pm – 1:30 am' },
+        weekend: { open: '12:00 pm', close: '12:00 am', range: '12:00 pm – 12:00 am' },
+        cutoff:  '11:00 pm',
+      },
     },
 
     offers: {
@@ -1737,7 +1857,7 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
       : placeholderSVG();
 
     return '' +
-    '<article class="glass ringed lift card' + (cart[item.id] ? ' is-in-cart' : '') + ' reveal" ' +
+    '<article class="glass ringed lift card' + (cart[item.id] ? ' is-in-cart' : '') + ' reveal reveal--deliver" ' +
              'data-id="' + item.id + '" style="--d:' + Math.min(index * 70, 350) + 'ms">' +
       '<div class="card__media">' + media +
         '<div class="card__badges">' + badge + drink + '</div>' +
@@ -2027,12 +2147,63 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   const nav = $('#nav');
   const toTop = $('#toTop');
 
+  /* ══════════════════════════════════════════════════════════════
+     SCROLL EXTRAS — delivery progress + hero drift
+     Both are painted from one rAF-throttled pass, so a fast scroll
+     can never queue up more than a single frame of work.
+     ══════════════════════════════════════════════════════════════ */
+  const scrollFill  = $('#scrollFill');
+  const scrollRider = $('#scrollRider');
+  const progressEl  = $('.progress');
+  const heroEl      = $('#hero');
+  const heroWrap    = heroEl ? $('.wrap', heroEl) : null;
+
+  let viewW = window.innerWidth;
+  let heroH = heroEl ? heroEl.offsetHeight : 0;
+  let rafId = 0;
+  let lastHeroY = -1;
+
+  function paintScrollFx() {
+    rafId = 0;
+    const doc = document.documentElement;
+    const y = window.scrollY || window.pageYOffset;
+
+    // ── delivery progress: the rider heads for the door ──
+    const max = doc.scrollHeight - doc.clientHeight;
+    const p = max > 0 ? Math.min(1, Math.max(0, y / max)) : 0;
+    if (scrollFill) scrollFill.style.transform = 'scaleX(' + p + ')';
+    if (scrollRider) {
+      scrollRider.style.transform =
+        'translateX(' + (p * viewW) + 'px) translateX(-50%) scaleX(-1)';
+    }
+    if (progressEl) progressEl.classList.toggle('is-active', p > 0.008);
+
+    // ── the hero drifts up and fades as you leave it ──
+    if (heroWrap && heroH) {
+      const hy = Math.min(y, heroH);
+      if (hy !== lastHeroY) {
+        lastHeroY = hy;
+        heroWrap.style.transform = 'translate3d(0,' + (hy * 0.26).toFixed(1) + 'px,0)';
+        heroWrap.style.opacity = Math.max(0, 1 - hy / (heroH * 0.82)).toFixed(3);
+      }
+    }
+  }
+
+  function queueScrollFx() { if (!rafId) rafId = requestAnimationFrame(paintScrollFx); }
+
   function onScroll() {
     const y = window.scrollY || window.pageYOffset;
     nav.classList.toggle('is-scrolled', y > 8);
     toTop.classList.toggle('is-shown', y > 700);
+    queueScrollFx();
   }
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () {
+    viewW = window.innerWidth;
+    heroH = heroEl ? heroEl.offsetHeight : 0;
+    lastHeroY = -1;
+    queueScrollFx();
+  }, { passive: true });
   toTop.addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
@@ -2078,47 +2249,114 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
      The visitor's own timezone is irrelevant: we always resolve IST,
      so someone browsing from anywhere sees the correct state.
      ══════════════════════════════════════════════════════════════ */
-  // Seconds since IST midnight (0..86399). Always resolved in the kitchen's own
-  // timezone, never the visitor's.
-  function istSecondsNow() {
+  // 0 = Sunday, matching JS getUTCDay()
+  const DOW = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+
+  // The kitchen's own clock: seconds since IST midnight, plus the IST day of
+  // week. One Intl read per call, and never the visitor's own timezone.
+  function istNow() {
     const H = CONFIG.hours;
     try {
       const parts = new Intl.DateTimeFormat('en-GB', {
-        timeZone: H.tz, hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
+        timeZone: H.tz, weekday: 'short',
+        hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23',
       }).formatToParts(new Date());
-      let h = 0, m = 0, sec = 0;
+      let h = 0, m = 0, sec = 0, wd = null;
       parts.forEach(function (p) {
         if (p.type === 'hour') h = parseInt(p.value, 10) % 24;   // some engines emit "24"
         if (p.type === 'minute') m = parseInt(p.value, 10);
         if (p.type === 'second') sec = parseInt(p.value, 10);
+        if (p.type === 'weekday') wd = p.value;
       });
-      return h * 3600 + m * 60 + sec;
+      const dow = DOW[wd];
+      return {
+        seconds: h * 3600 + m * 60 + sec,
+        dow: (dow == null) ? new Date(Date.now() + 19800000).getUTCDay() : dow,
+      };
     } catch (e) {
       // Fallback for engines without timeZone support: IST is a fixed UTC+05:30.
-      const d = new Date();
-      return (d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds() + 19800) % 86400;
+      const d = new Date(Date.now() + 19800000);
+      return {
+        seconds: d.getUTCHours() * 3600 + d.getUTCMinutes() * 60 + d.getUTCSeconds(),
+        dow: d.getUTCDay(),
+      };
     }
   }
 
+  function istSecondsNow() { return istNow().seconds; }
+  function istWeekday()    { return istNow().dow; }
   function istMinutesNow() { return Math.floor(istSecondsNow() / 60); }
 
-  // How long until the next state change, in seconds, plus what to call it.
-  // Closed -> counts down to 7:00 pm; open -> counts down to 1:30 am.
-  function nextChange(nowSeconds) {
+  /* ── the two daily shifts ────────────────────────────────────────
+     A shift "opens" on a given day. Mon–Fri's crosses midnight, so its
+     tail lands on the NEXT day; Sat–Sun's ends at 24:00 sharp. That
+     difference is the whole reason this needs a day of week. */
+  function isWeekendDow(dow) { return dow === 0 || dow === 6; }
+
+  function scheduleFor(dow) {
     const H = CONFIG.hours;
-    const opensAt  = H.openHour * 3600 + H.openMin * 60;
-    const closesAt = H.closeHour * 3600 + H.closeMin * 60;
-    const now = (nowSeconds == null) ? istSecondsNow() : nowSeconds;
-    const isOpen = now >= opensAt || now < closesAt;
-    let target;
-    if (!isOpen) {
-      target = opensAt;                       // always later today (01:30 -> 19:00)
-    } else if (now >= opensAt) {
-      target = 86400 + closesAt;              // evening shift, closes after midnight
+    const weekend = isWeekendDow(dow);
+    const s = weekend ? H.weekend : H.week;
+    const openAt  = s.openHour * 60 + s.openMin;
+    const closeAt = s.closeHour * 60 + s.closeMin;   // 1440 for the weekend
+    return { openAt: openAt, closeAt: closeAt, crosses: closeAt <= openAt, weekend: weekend };
+  }
+
+  // The portion of a shift that falls on its OWN opening day.
+  function shiftToday(sc, now) {
+    return sc.crosses ? (now >= sc.openAt) : (now >= sc.openAt && now < sc.closeAt);
+  }
+  // The portion of YESTERDAY's shift that spilled past midnight into today.
+  function shiftSpillover(scPrev, now) {
+    return scPrev.crosses && now < scPrev.closeAt;
+  }
+
+  function openState(nowMinutes, dowArg) {
+    const H = CONFIG.hours;
+    const now = (nowMinutes == null) ? istMinutesNow() : nowMinutes;
+    const dow = (dowArg == null) ? istWeekday() : dowArg;
+    const sc     = scheduleFor(dow);
+    const scPrev = scheduleFor((dow + 6) % 7);
+    const cutoff = H.cutoffHour * 60 + H.cutoffMin;
+
+    const today = shiftToday(sc, now);
+    // e.g. Saturday 00:30 is still running Friday night's shift
+    const spill = shiftSpillover(scPrev, now);
+    const isOpen = today || spill;
+
+    // Delivery needs the cutoff still ahead, which is only ever true during
+    // today's own shift — the spill-over tail is takeaway only.
+    const deliveryOpen = today && now < cutoff;
+
+    return { isOpen: isOpen, deliveryOpen: deliveryOpen, weekend: sc.weekend, dow: dow };
+  }
+
+  // How long until the next state change, in seconds, plus what to call it.
+  // Closed -> counts down to the next opening; open -> counts down to closing.
+  function nextChange(nowSeconds, dowArg) {
+    const nowSec = (nowSeconds == null) ? istSecondsNow() : nowSeconds;
+    const nowMin = Math.floor(nowSec / 60);
+    const dow = (dowArg == null) ? istWeekday() : dowArg;
+    const sc     = scheduleFor(dow);
+    const scPrev = scheduleFor((dow + 6) % 7);
+    const st     = openState(nowMin, dow);
+
+    let targetMin;
+    if (!st.isOpen) {
+      // closed ⇒ today's shift hasn't opened yet, so now is always < openAt
+      targetMin = sc.openAt;
+    } else if (shiftToday(sc, nowMin)) {
+      // today's own shift — closes tonight, or after midnight on a weekday
+      targetMin = sc.crosses ? (1440 + sc.closeAt) : sc.closeAt;
     } else {
-      target = closesAt;                      // small hours, closes at 01:30 today
+      // we're in the tail of yesterday's shift, which ends at its own closeAt
+      targetMin = scPrev.closeAt;
     }
-    return { isOpen: isOpen, label: isOpen ? 'Closes in' : 'Opens in', seconds: Math.max(0, target - now) };
+    return {
+      isOpen: st.isOpen,
+      label: st.isOpen ? 'Closes in' : 'Opens in',
+      seconds: Math.max(0, targetMin * 60 - nowSec),
+    };
   }
 
   function pad2(n) { return (n < 10 ? '0' : '') + n; }
@@ -2140,10 +2378,10 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     return cdBlocks;
   }
 
-  function renderCountdown(nowSeconds) {
+  function renderCountdown(nowSeconds, dow) {
     const blocks = countdownBlocks();
     if (!blocks.length) return;
-    const nx = nextChange(nowSeconds);
+    const nx = nextChange(nowSeconds, dow);
     const rem = nx.seconds;
     const hh = pad2(Math.floor(rem / 3600));
     const mm = pad2(Math.floor((rem % 3600) / 60));
@@ -2157,52 +2395,44 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     });
   }
 
-  function openState(nowMinutes) {
-    const H = CONFIG.hours;
-    const now = (nowMinutes == null) ? istMinutesNow() : nowMinutes;
-    const opensAt  = H.openHour * 60 + H.openMin;
-    const closesAt = H.closeHour * 60 + H.closeMin;
-    const cutoff   = H.cutoffHour * 60 + H.cutoffMin;
-    // The window runs 7:00 pm → 1:30 am, so it wraps past midnight.
-    const isOpen = now >= opensAt || now < closesAt;
-    // Delivery stops at 11:30 pm; the tail of the night is takeaway only.
-    const deliveryOpen = now >= opensAt && now < cutoff;
-    return { isOpen: isOpen, deliveryOpen: deliveryOpen };
-  }
-
-  // The sign is fully determined by these two flags. When either flips we
+  // The sign is fully determined by these flags. When any of them flips we
   // re-render the whole sign; otherwise a tick only moves the countdown digits.
+  // `weekend` is in here so the midnight weekday→weekend handover re-renders.
   function stateKey(st) {
-    return (st.isOpen ? 'open' : 'closed') + '|' + (st.deliveryOpen ? 'delivery' : 'takeaway');
+    return (st.isOpen ? 'open' : 'closed') + '|' +
+           (st.deliveryOpen ? 'delivery' : 'takeaway') + '|' +
+           (st.weekend ? 'we' : 'wd');
   }
   let lastStateKey = null;
 
   function tickCountdown() {
-    const secs = istSecondsNow();                       // one clock read per tick
-    const st = openState(Math.floor(secs / 60));
+    const n = istNow();                                 // one clock read per tick
+    const st = openState(Math.floor(n.seconds / 60), n.dow);
     if (stateKey(st) !== lastStateKey) { renderShopSign(); return; }
-    renderCountdown(secs);
+    renderCountdown(n.seconds, n.dow);
   }
 
   function renderShopSign() {
     const sign = $('#shopSign');
     if (!sign) return;
     const H = CONFIG.hours;
-    const st = openState();
+    const n = istNow();
+    const st = openState(Math.floor(n.seconds / 60), n.dow);
+    const lbl = st.weekend ? H.labels.weekend : H.labels.week;
 
     sign.classList.toggle('sign--closed', !st.isOpen);
 
     let status, meta;
     if (!st.isOpen) {
       status = 'Babyz Pizza is now closed';
-      meta = 'Will open at ' + H.openLabel + ' today';
+      meta = 'Will open at ' + lbl.open + ' today';
     } else if (st.deliveryOpen) {
       status = 'Babyz Pizza is now open';
       // \n renders as a real line break (.sign__meta is white-space:pre-line)
-      meta = 'Delivery till ' + H.cutoffLabel + '\nTakeaway till ' + H.closeLabel;
+      meta = 'Delivery till ' + H.labels.cutoff + '\nTakeaway till ' + lbl.close;
     } else {
       status = 'Babyz Pizza is now open';
-      meta = 'Takeaway only now\nDelivery closed at ' + H.cutoffLabel;
+      meta = 'Takeaway only now\nDelivery closed at ' + H.labels.cutoff;
     }
 
     const statusEl = $('#signStatus');
@@ -2213,10 +2443,29 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
     // mirror the state onto the hours block in the contact section
     const hours = $('.hours');
     if (hours) hours.classList.toggle('is-closed', !st.isOpen);
+    // and mark which of the two schedules is today's
+    $$('.hours__sched').forEach(function (row) {
+      const rowIsWeekend = row.dataset.days === 'weekend';
+      row.dataset.today = (rowIsWeekend === st.weekend) ? 'true' : 'false';
+    });
 
     lastStateKey = stateKey(st);
-    renderCountdown();
+    renderCountdown(n.seconds, n.dow);
   }
+
+  /* ══════════════════════════════════════════════════════════════
+     SPLASH — the CSS clears it on its own; we just drop the node after
+     ══════════════════════════════════════════════════════════════ */
+  (function () {
+    const splash = $('#splash');
+    if (!splash) return;
+    const drop = function () { if (splash.parentNode) splash.parentNode.removeChild(splash); };
+    splash.addEventListener('animationend', function (e) {
+      if (e.animationName === 'splashOut') drop();
+    });
+    // safety net: under reduced motion it is display:none, so no event fires
+    setTimeout(drop, 4000);
+  })();
 
   /* ══════════════════════════════════════════════════════════════
      INIT
@@ -2236,10 +2485,11 @@ body.cart-open .toast{bottom:calc(var(--cartbar-h,84px) + 1.5rem + env(safe-area
   onScroll();
   observeReveal();
 
-  // One tick a second keeps the countdown live AND catches the 7:00 pm /
-  // 11:30 pm / 1:30 am boundaries within a second of them happening. Each tick
-  // recomputes from the clock rather than decrementing, so a throttled
-  // background tab can never drift.
+  // One tick a second keeps the countdown live AND catches every boundary —
+  // opening, the 11:00 pm delivery cutoff, closing, and the weekday↔weekend
+  // handover at midnight — within a second of it happening. Each tick recomputes
+  // from the clock rather than decrementing, so a throttled background tab can
+  // never drift.
   setInterval(tickCountdown, 1000);
 
   // safety net: if fonts/images shift things around, re-check the reveal state
